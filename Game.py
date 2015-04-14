@@ -2,6 +2,10 @@ import logging
 import warnings
 import sys
 
+from Player import Player
+from Tile import Tile
+from Unit import Unit
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -23,6 +27,10 @@ class Game(object):
         self.turn = 1
         self.players = [Player('Player{}'.format(n+1)) for n in range(self.n_players)] 
         self.player_order = [p.name for p in np.random.choice(self.players, size = len(self.players), replace = False)]
+        self.tiles = [[Tile(wall_north = False,
+                            wall_south = False,
+                            wall_east = False,
+                            wall_west = False) for i in range(4)]*4]
         
         print 'Player order is: ' + ', '.join(self.player_order)
         
@@ -34,10 +42,3 @@ class Game(object):
         
     def turn():
         pass
-        
-class Player:
-
-    def __init__(self, name, n_units = 10):
-        self.name = name
-        self.n_units = n_units
-        
