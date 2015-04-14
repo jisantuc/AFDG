@@ -30,6 +30,8 @@ class Unit:
         grid in that direction.
         """
 
+        #needed: check for occupancy by another player
+
         if game.tiles[self.location].has_wall(direction):
             warnings.warn('Wall on this unit\'s tile. Cannot move this direction.')
             return
@@ -49,3 +51,17 @@ class Unit:
                 warning.warn('Wall on target tile that way. Cannot move.')
             else:
                 self.set_location((self.x, self.y+1))
+        elif direction == 'west':
+            if self.x == 0:
+                warnings.warn('Edge of map that way. Cannot move.')
+            elif game.tiles[(self.x-1, self.y)].has_wall('east'):
+                warnings.warn('Wall on target tile that way. Cannot move.')
+            else:
+                self.set_location((self.x-1, self.y))
+        elif direction == 'east':
+            if self.x == len(game.tiles[0]):
+                warnings.warn('Edge of map that way. Cannot move.')
+            elif game.tiles[(self.x+1, self.y)].has_wall('west'):
+                warnings.warn('Wall on target tile that way. Cannot move.')
+            else:
+                self.set_location((self.x+1, self.y))
