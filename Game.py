@@ -22,15 +22,19 @@ class Game(object):
         self.n_walls = n_walls
         self.n_players = n_players
         self.n_turns = n_turns
-        self.phase = 'MAR'
+        self.phase = 'INITIAL'
         self.grid_size = grid_size
         self.turn = 1
         self.players = [Player('Player{}'.format(n+1)) for n in range(self.n_players)] 
         self.player_order = [p.name for p in np.random.choice(self.players, size = len(self.players), replace = False)]
-        self.tiles = [[Tile(wall_north = False,
-                            wall_south = False,
-                            wall_east = False,
-                            wall_west = False) for i in range(4)]*4]
+        self.tiles = [Tile(self,
+                           location = (i,j),
+                           wall_north = False,
+                           wall_south = False,
+                           wall_east = False,
+                           wall_west = False) for i in range(4) \
+                                              for j in range(4)]
+        self.units = []
         
         print 'Player order is: ' + ', '.join(self.player_order)
         
