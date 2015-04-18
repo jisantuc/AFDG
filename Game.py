@@ -25,7 +25,8 @@ class Game(object):
         self.phase = 'INITIAL'
         self.grid_size = grid_size
         self.turn = 1
-        self.players = [Player('Player{}'.format(n+1)) for n in range(self.n_players)] 
+        self.players = [Player('Player{}'.format(n+1)) for n in range(self.n_players)]
+        self.player_names = [p.name for p in self.players]
         self.player_order = [p.name for p in np.random.choice(self.players, size = len(self.players), replace = False)]
         self.tiles = [Tile(self,
                            location = (i,j),
@@ -38,6 +39,9 @@ class Game(object):
         
         print 'Player order is: ' + ', '.join(self.player_order)
         
+    def find_player(self, player_name):
+        return [p for p in self.players if p.name == player_name][0]
+
     def MAR():
         pass
     
