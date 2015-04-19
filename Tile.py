@@ -3,7 +3,10 @@ import warnings
 class Tile:
     
     def __init__(self, game, location, wall_north, wall_south, wall_east, wall_west):
-
+        """
+        Creates a tile in a game at a particular location with
+        booleans indicating in which direction the tile has walls.
+        """
         assert location[0] < game.grid_size[0] and \
                location[1] < game.grid_size[1]
 
@@ -15,22 +18,39 @@ class Tile:
         self.location = location
         self.units = []
         self.defended_by = 0
+        self.has_oaf = False
 
     def __repr__(self):
         return '\n'.join(['[{0},{1}]'.format(*self.location)] +\
                          [k + ' ' + str(v) for k, v in self.walls.items()])
 
     def has_wall(self,direction):
+        """
+        Returns whether a tile has a wall in a particular direction.
+        """
         return self.walls[direction]
 
     def occupied(self):
+        """
+        Returns either the player and number of units defending the tile
+        or False if no player is occupying the tile.
+        """
         return (self.units[0].player, self.defended_by) if self.units else False
 
     def count_defenders(self):
-        defender_types = ['wizard' if u.wizard else 'oaf' for u in self.units]
-        return len(defender_types) if 'oaf' in defender_types else 0
+        """
+        Counts number of defenders on the tile.
+        Based on the rules of AFDG, if there are no oafs, the tile
+        is not actually defended no matter how many wizards are on it.
+        """
+        return len(self.units) if self.has_oaf else False
 
     def add_wall(self, direction):
+        """
+        Adds a wall to this tile on side direction if no wall
+        already present on that side.
+        """
+
         if not self.walls[direction]:
             self.walls[direction] = True
         else:
@@ -38,6 +58,11 @@ class Tile:
                           ' Doing nothing.')
 
     def remove_wall(self, direction):
+        """
+        Removes a wall from this tile on side direction if a
+        wall is already present on that side.
+        """
+
         if not self.walls[direction]:
             self.walls[directoin] = True
         else:
@@ -45,9 +70,16 @@ class Tile:
                           ' Doing nothing.')
 
     def set_walls(self, walls):
+        """
+        Replaces self.walls with a new dictionary of walls.
+        """
         self.walls = walls
 
     def rotate(self, angle = 90):
+        """
+        Rotates the tile by angle. Angle must be evenly divisible
+        by 90, but is otherwise unbounded.
+        """
         assert angle % 90 == 0
         angle = angle % 360
         dirs = {90: {'north': 'west',
@@ -69,4 +101,8 @@ class Tile:
         
         
     def collect_units(self):
+        """
+        Collects units on this tile. Called at the end of a
+        player's move/attack/rotate phase.
+        """
         self.units = [u for u in self.game.units if u.loc == self.location]

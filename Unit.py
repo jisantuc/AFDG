@@ -2,9 +2,9 @@ class Unit:
 
     def __init__(self, game, location, player_name):
         """
-        Takes a location (tuple), a player (of class Player), and an
-        indicator for whether the unit is a wizard. Places a unit of that type
-        on location belonging to player.
+        Takes a game (of class Game), a location (tuple), a player
+        (of class Player). Places a unit on location in game
+        belonging to player.
         """
 
         self.x = location[0]
@@ -31,10 +31,17 @@ class Unit:
             PLAYER = self.player.name)
 
     def set_location(self, new_location):
+        """
+        Changes location of unit.
+        """
+
         self.x = new_location[0]
         self.y = new_location[1]
 
     def can_move(self, direction):
+        """
+        Verifies that a unit can move in a particular direction.
+        """
 
         def no_walls(direction):
 
@@ -47,7 +54,16 @@ class Unit:
         return (no_walls(direction) & can_invade(direction))
 
 class Oaf(Unit):
+    """
+    Subclasses Unit. Includes the move method, which sets both
+    self.attacked and self.moved to True.
+    """
     pass
 
 class Wizard(Unit):
+    """
+    Subclass Unit. Includes the move method, which sets
+    self.moved to True, and the attack method, which sets
+    self.attacked to True.
+    """
     pass
