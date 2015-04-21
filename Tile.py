@@ -1,4 +1,5 @@
 import warnings
+import Unit
 
 class Tile:
     
@@ -75,7 +76,7 @@ class Tile:
         """
         self.walls = walls
 
-    def rotate(self, angle = 90):
+    def rotate(self, ange = 90):
         """
         Rotates the tile by angle. Angle must be evenly divisible
         by 90, but is otherwise unbounded.
@@ -98,11 +99,19 @@ class Tile:
         new_walls = {dirs[angle][k]: self.walls[k] for k in dirs[angle].keys()}
 
         self.set_walls(new_walls)
-        
+ 
+    def check_for_oaf(self):
+        """
+        Returns True if an Oaf is present on the tile,
+        otherwise False.
+        """
+        return bool(len([u for u in self.units if isinstance(u, Unit.Oaf)]))
         
     def collect_units(self):
         """
         Collects units on this tile. Called at the end of a
         player's move/attack/rotate phase.
+        Also updates self's has_oaf attribute.
         """
         self.units = [u for u in self.game.units if u.loc == self.location]
+        self.has_oaf = self.check_for_oaf()

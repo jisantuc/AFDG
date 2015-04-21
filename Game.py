@@ -52,6 +52,19 @@ class Game(object):
         
         print 'Player order is: ' + ', '.join(self.player_order)
         
+    def __getitem__(self,xy):
+        """
+        Returns the tile at xy.
+        """
+        try:
+            assert xy[0] < self.grid_size[0] and xy[1] < self.grid_size[1]
+        except AssertionError as e:
+            warnings.warn('Grid location out of range. Doing nothing.')
+            return
+
+        return [t for t in self.tiles if t.location == xy].pop()
+        
+
     def find_player(self, player_name):
         """
         Finds the player object corresponding to the player
