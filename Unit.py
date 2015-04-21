@@ -40,7 +40,7 @@ class Unit:
         self.x = new_location[0]
         self.y = new_location[1]
 
-    def can_move(self, direction, skip_CI = False):
+    def can_move(self, location = None, direction = None):
         """
         Verifies that a unit can move in a particular direction by
         checking:
@@ -56,16 +56,32 @@ class Unit:
         If 1 and 2 are false and invasion is possible, returns 'INVADE'.
         Otherwise returns False.
 
-        skip_CI parameter allows omitting the check for possibility of
-        invasion. Used during the check for possibility of invasion to
-        avoid recursion.
+        One of location or direction must be specified. If location is
+        specified, direction is inferred from the units current location.
+        If direction is specified, location will not be evaluated, i.e.,
+        specifying a direction and location in conflict will evaluate
+        whether the unit can move in direction instead of to location.
         """
 
-        try:
-            assert direction in ['north','south','east','west']
-        except AssertionError as e:
-            warnings.warn('Direction {} not allowed'.format(direction))
-            return False
+        if direction:
+            try:
+                assert direction in ['north','south','east','west']
+            except AssertionError as e:
+                warnings.warn('Direction {} not allowed'.format(direction))
+                return False
+
+        elif location:
+            test = (self.x - location[0], self.y - location[1])
+            if test == (-1,0):
+                direction = 'east'
+            elif test == (1,0):
+                direction = 'west'
+            elif test == (0,1):
+                direction = 'south'
+            elif test == (0,-1):
+                direction = 'north'
+            else:
+                return False
 
         if self.game[self.x, self.y].has_wall(direction):
             warnings.warn('Wall on your tile to the {}.'.format(direction) +\
@@ -97,28 +113,6 @@ class Unit:
             in specified direction.
             """
             return not target.has_wall(check_dir)
-
-        def can_invade(direction):
-            """
-            Checks whether target tile is either unoccupied or
-            occupied by the phasing player. If the target tile
-            is occupied by any other player, checks whether the
-            player has enough units that can move to that tile
-            and have not attacked to invade.
-            """
-            
-            occupation = target.occupied()
-
-            if occupation:
-                occupant, defense = occupation
-
-                if occupant == self.player:
-                    return True
-                else:
-                    return True if self.player.units_near(taget.location) >\
-                                   defense else False
-            else:
-                return True
                 
         return (no_walls(direction) & can_invade(direction))
 
