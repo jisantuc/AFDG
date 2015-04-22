@@ -40,6 +40,19 @@ class Unit:
         self.x = new_location[0]
         self.y = new_location[1]
 
+    def infer_direction(self, location):
+        test = (self.x - location[0], self.y - location[1])
+        if test == (-1,0):
+            return 'east'
+        elif test == (1,0):
+            return 'west'
+        elif test == (0,1):
+            return 'south'
+        elif test == (0,-1):
+            return 'north'
+        else:
+            return False        
+
     def can_move(self, location = None, direction = None):
         """
         Verifies that a unit can move in a particular direction by
@@ -71,16 +84,8 @@ class Unit:
                 return False
 
         elif location:
-            test = (self.x - location[0], self.y - location[1])
-            if test == (-1,0):
-                direction = 'east'
-            elif test == (1,0):
-                direction = 'west'
-            elif test == (0,1):
-                direction = 'south'
-            elif test == (0,-1):
-                direction = 'north'
-            else:
+            direction = self.infer_direction(location)
+            if not direction:
                 return False
 
         if self.game[self.x, self.y].has_wall(direction):
@@ -114,14 +119,57 @@ class Unit:
             """
             return not target.has_wall(check_dir)
                 
-        return (no_walls(direction) & can_invade(direction))
+        return no_walls(direction)
 
 class Oaf(Unit):
     """
     Subclasses Unit. Includes the move method, which sets both
     self.attacked and self.moved to True.
     """
-    pass
+
+    def __repr__(self):
+        return 'Oaf on ({X},{Y}).'.format(X=self.x,
+                                          Y=self.y)
+    
+    def move(self, direction = None, location = None):
+        """
+        Moves this unit in direction, if allowed. If location
+        is specified and direction is not, infers direction from
+        location. If direction and location are both specified,
+        ignores location.
+        """
+
+        if direction:
+            try:
+                assert direction in ['north','south','east','west']
+            except AssertionError as e:
+                warnings.warn('Direction {} not allowed'.format(direction))
+                return
+            able = self.can_move(direction)
+
+        elif location:
+            direction = self.infer_direction(location)
+            if not direction:
+                warnings.warn('Direction {} not allowed.'.format(direction))
+                return
+            able = self.can_move(direction)
+            
+        if not able:
+            warnings.warn('Can\'t go {}.'.format(direction) +\
+                          ' Doing nothing.')
+            return
+
+        if direction == 'north':
+            self.set_location((self.x, self.y-1))
+        elif direction == 'south':
+            self.set_location((self.x, self.y+1))
+        elif direction == 'east':
+            self.set_location((self.x+1, self.y))
+        else:
+            self.set_location((self.x-1, self.y))
+
+        self.moved = True
+        self.attacked = True
 
 class Wizard(Unit):
     """
@@ -129,4 +177,52 @@ class Wizard(Unit):
     self.moved to True, and the attack method, which sets
     self.attacked to True.
     """
-    pass
+    
+    def __repr__(self):
+        return 'Wizard on ({X},{Y}).'.format(X=self.x,
+                                             Y=self.y)
+
+    def move(self, direction = None, location = None):
+        """
+        Moves this unit in direction, if allowed. If location
+        is specified and direction is not, infers direction from
+        location. If direction and location are both specified,
+        ignores location.
+        """
+
+        if direction:
+            try:
+                assert direction in ['north','south','east','west']
+            except AssertionError as e:
+                warnings.warn('Direction {} not allowed'.format(direction))
+                return
+            able = self.can_move(direction)
+
+        elif location:
+            direction = self.infer_direction(location)
+            if not direction:
+                warnings.warn('Direction {} not allowed'.format(direction))
+                return
+            able = self.can_move(direction)
+            
+        if not able:
+            warnings.warn('Can\'t go {}.'.format(direction) +\
+                          ' Doing nothing.')
+            return
+
+        if direction == 'north':
+            self.set_location((self.x, self.y-1))
+        elif direction == 'south':
+            self.set_location((self.x, self.y+1))
+        elif direction == 'east':
+            self.set_location((self.x+1, self.y))
+        else:
+            self.set_location((self.x-1, self.y))
+
+        self.moved = True
+
+    def attack(self, location = None, direction = None):
+        """
+        Attacks location, possibly with help?
+        """
+        pass

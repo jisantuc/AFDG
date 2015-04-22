@@ -11,6 +11,12 @@ class Player:
         self.n_units = n_units
         self.units = []
 
+    def __getitem__(self, location):
+        """
+        Returns units belonging to player on location.
+        """
+        return [u for u in self.units if (u.x, u.y) == location]
+
     def units_near(self, location):
         """
         Finds units near location that are adjacent to location.
