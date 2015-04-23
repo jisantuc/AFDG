@@ -1,4 +1,6 @@
 import warnings
+import random
+
 import Unit
 
 class Tile:
@@ -20,6 +22,8 @@ class Tile:
         self.units = []
         self.defended_by = 0
         self.has_oaf = False
+        self.is_base = False
+        self.owned_by = None
 
     def __repr__(self):
         return '\n'.join(['[{0},{1}]'.format(*self.location)] +\
@@ -65,11 +69,31 @@ class Tile:
         """
 
         if not self.walls[direction]:
-            self.walls[directoin] = True
+            self.walls[direction] = True
         else:
-            warnings.warn('No wall on {}'.format(direction)+\
+            warnings.warn('No wall on {} on {}'.format(direction,
+                                                       self.location)+\
                           ' Doing nothing.')
 
+    def add_random_walls(self):
+        """
+        Adds up to three walls in randomly selected directions.
+        """
+        
+        dirs = ['north','south','east','west']
+        n_walls = random.choice([0,1,2,3])
+        if n_walls == 3:
+            exclude = random.choice(dirs)
+            for d in [di for di in dirs if di != exclude]:
+                self.add_wall(d)
+        elif n_walls > 0:
+            walls = [random.choice(dirs) for i in range(n_walls)]
+            for w in walls:
+                self.add_wall(w)
+        else:
+            return
+            
+        
     def set_walls(self, walls):
         """
         Replaces self.walls with a new dictionary of walls.
@@ -107,6 +131,26 @@ class Tile:
         """
         return bool(len([u for u in self.units if isinstance(u, Unit.Oaf)]))
         
+    def make_base(self,player):
+        """
+        Makes self a base location for player.
+        """
+        self.is_base = True
+        self.owned_by = player
+
+    def can_add_base(self,player):
+        """
+        Checks if self is a base for player.
+        """
+        test_occ = self.occupied()
+        if self.is_base:
+            return False
+        elif test_occ and test_occ[0].name != player.name:
+            return False
+        else:
+            return True
+        
+
     def collect_units(self):
         """
         Collects units on this tile. Called at the end of a

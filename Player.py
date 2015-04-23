@@ -8,6 +8,7 @@ class Player:
         """
 
         self.name = name
+        self.game = game
         self.n_units = n_units
         self.units = []
 
@@ -82,7 +83,7 @@ class Player:
         occupation = target.occupied()
         if not occupation:
             return True
-        elif occupation[0].name = self.name:
+        elif occupation[0].name == self.name:
             return True
         elif self.n_invading_units_near(location) >\
              target.defended_by:
@@ -102,7 +103,9 @@ class Player:
         """
         Places a new base on location.
         """
-        pass
+        test_base = self.game[location].can_add_base(self)
+        if test_base:
+            self.game[location].make_base(self)
 
     def rotate(self, location, angle):
         """
