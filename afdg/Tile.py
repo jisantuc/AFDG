@@ -1,8 +1,3 @@
-import warnings
-import random
-
-import Unit
-
 class Tile:
     
     def __init__(self, game, location, wall_north, wall_south, wall_east, wall_west):
@@ -136,7 +131,7 @@ class Tile:
         Makes self a base location for player.
         """
         self.is_base = True
-        self.owned_by = player
+        self.owned_by = player.name
 
     def can_add_base(self,player):
         """
@@ -146,6 +141,8 @@ class Tile:
         if self.is_base:
             return False
         elif test_occ and test_occ[0].name != player.name:
+            return False
+        elif self.game.bases_near(self.location) > 0:
             return False
         else:
             return True

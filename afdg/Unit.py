@@ -1,5 +1,3 @@
-import warnings
-
 class Unit:
 
     def __init__(self, game, location, player_name):

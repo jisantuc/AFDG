@@ -1,13 +1,11 @@
-import logging
-import warnings
-import sys
-
-from Player import Player
-from Tile import Tile
-from Unit import Unit
+import random
 
 import matplotlib.pyplot as plt
-import numpy as np
+
+import Player
+import Unit
+import Tile
+
 
 class Game(object):
 
@@ -38,19 +36,21 @@ class Game(object):
         self.phase = 'INITIAL'
         self.grid_size = grid_size
         self.turn = 1
-        self.players = [Player('Player{}'.format(n+1), self) for n in range(self.n_players)]
+        self.players = [Player.Player('Player{}'.format(n+1), self) for n in range(self.n_players)]
         self.player_names = [p.name for p in self.players]
-        self.player_order = [p.name for p in np.random.choice(self.players, size = len(self.players), replace = False)]
-        self.tiles = [Tile(self,
-                           location = (i,j),
-                           wall_north = False,
-                           wall_south = False,
-                           wall_east = False,
-                           wall_west = False) for i in range(4) \
-                                              for j in range(4)]
+        self.player_order = random.sample(self.players, len(self.players))
+        self.tiles = [Tile.Tile(self,
+                                location = (i,j),
+                                wall_north = False,
+                                wall_south = False,
+                                wall_east = False,
+                                wall_west = False) for i in range(4) \
+                                                   for j in range(4)]
         self.units = []
         
-        print 'Player order is: ' + ', '.join(self.player_order)
+        print 'Player order is: ' + ', '.join(
+            [s.name for s in self.player_order]
+        )
         
     def __getitem__(self,xy):
         """
@@ -63,7 +63,6 @@ class Game(object):
             return
 
         return [t for t in self.tiles if t.location == xy].pop()
-        
 
     def find_player(self, player_name):
         """
@@ -71,6 +70,12 @@ class Game(object):
         with name = player_name.
         """
         return [p for p in self.players if p.name == player_name][0]
+
+    def bases_near(self, location):
+        """
+        Counts number of bases orthogonally adjacent to location.
+        """
+        pass
 
     def MAR(self, player):
         """
