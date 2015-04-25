@@ -20,7 +20,7 @@ class Unit:
         self.moved = False
         self.attacked = False
 
-        self.limits = game.grid_size()
+        self.limits = game.grid_size
         game.units.append(self)
         self.game = game
 

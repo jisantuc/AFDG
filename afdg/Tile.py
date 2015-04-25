@@ -28,6 +28,7 @@ class Tile:
         """
         Returns whether a tile has a wall in a particular direction.
         """
+
         return self.walls[direction]
 
     def occupied(self):
@@ -35,6 +36,7 @@ class Tile:
         Returns either the player and number of units defending the tile
         or False if no player is occupying the tile.
         """
+
         return (self.units[0].player, self.defended_by) if self.units else False
 
     def count_defenders(self):
@@ -43,6 +45,7 @@ class Tile:
         Based on the rules of AFDG, if there are no oafs, the tile
         is not actually defended no matter how many wizards are on it.
         """
+
         return len(self.units) if self.has_oaf else False
 
     def add_wall(self, direction):
@@ -93,6 +96,7 @@ class Tile:
         """
         Replaces self.walls with a new dictionary of walls.
         """
+
         self.walls = walls
 
     def rotate(self, ange = 90):
@@ -100,6 +104,7 @@ class Tile:
         Rotates the tile by angle. Angle must be evenly divisible
         by 90, but is otherwise unbounded.
         """
+
         assert angle % 90 == 0
         angle = angle % 360
         dirs = {90: {'north': 'west',
@@ -124,12 +129,21 @@ class Tile:
         Returns True if an Oaf is present on the tile,
         otherwise False.
         """
+
         return bool(len([u for u in self.units if isinstance(u, Unit.Oaf)]))
         
+    def set_owner(self,player_name = None):
+        """
+        Sets self.owned_by equal to player.name.
+        """
+
+        self.owned_by = player_name if player_name is not None else None
+
     def make_base(self,player):
         """
         Makes self a base location for player.
         """
+
         self.is_base = True
         self.owned_by = player.name
 
@@ -137,6 +151,7 @@ class Tile:
         """
         Checks if self is a base for player.
         """
+
         test_occ = self.occupied()
         if self.is_base:
             return False
@@ -147,12 +162,41 @@ class Tile:
         else:
             return True
         
-
     def collect_units(self):
         """
         Collects units on this tile. Called at the end of a
         player's move/attack/rotate phase.
         Also updates self's has_oaf attribute.
         """
+
         self.units = [u for u in self.game.units if u.loc == self.location]
         self.has_oaf = self.check_for_oaf()
+
+    def add_unit(self, u):
+        """
+        Adds unit u to self.units.
+        """
+
+        self.units.append(u)
+
+    def set_units(self, us):
+        """
+        Takes a list of units and sets self.units equal
+        to that list.
+        """
+
+        self.units = us
+
+    def set_base(self, b):
+        """
+        Sets self.is_base to b.
+        """
+
+        self.is_base = b
+
+    def remove_unit(self, u):
+        """
+        Removes unit from self.units.
+        """
+
+        self.units.remove(u)

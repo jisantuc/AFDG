@@ -3,7 +3,6 @@ import random
 import matplotlib.pyplot as plt
 
 import Player
-import Unit
 import Tile
 
 
@@ -56,6 +55,7 @@ class Game(object):
         """
         Returns the tile at xy.
         """
+
         try:
             assert xy[0] < self.grid_size[0] and xy[1] < self.grid_size[1]
         except AssertionError as e:
@@ -69,24 +69,39 @@ class Game(object):
         Finds the player object corresponding to the player
         with name = player_name.
         """
+
         return [p for p in self.players if p.name == player_name][0]
+
+    def collect_units(self):
+        """
+        Sets self.units to current list of units in the game.
+        """
+
+        us = []
+        for p in self.players:
+            us.append(p.units)
+        
+        self.units = us
 
     def bases_near(self, location):
         """
         Counts number of bases orthogonally adjacent to location.
         """
+
         pass
 
     def MAR(self, player):
         """
         Runs the move/attack/rotate phase for player.
         """
+
         pass
     
     def action_phase(self, player):
         """
         Runs the action phase for player.
         """
+
         pass
         
     def turn(self):
@@ -94,4 +109,5 @@ class Game(object):
         For each player in self.players, runs first action_phase
         and then MAR.
         """
+
         pass
