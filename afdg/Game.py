@@ -1,3 +1,4 @@
+import warnings
 import random
 
 import matplotlib.pyplot as plt
@@ -45,6 +46,8 @@ class Game(object):
                                 wall_east = False,
                                 wall_west = False) for i in range(4) \
                                                    for j in range(4)]
+        for t in self.tiles:
+            t.add_random_walls()
         self.units = []
         
         print 'Player order is: ' + ', '.join(
@@ -88,7 +91,12 @@ class Game(object):
         Counts number of bases orthogonally adjacent to location.
         """
 
-        pass
+        targets = [(location[0] + 1, location[1]),
+                   (location[0] - 1, location[1]),
+                   (location[0], location[1] + 1),
+                   (location[0], location[1] - 1)]
+
+        return bool(sum([self[t].is_base if self[t] else 0 for t in targets]))
 
     def MAR(self, player):
         """

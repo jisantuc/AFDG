@@ -1,3 +1,8 @@
+import warnings
+import random
+
+import Unit
+
 class Tile:
     
     def __init__(self, game, location, wall_north, wall_south, wall_east, wall_west):
@@ -57,8 +62,10 @@ class Tile:
         if not self.walls[direction]:
             self.walls[direction] = True
         else:
-            warnings.warn('Wall already on {}.'.format(direction)+\
-                          ' Doing nothing.')
+            warnings.warn('Wall already on {0} of {1}.'.format(
+                direction,
+                self.location
+            ) + ' Doing nothing.')
 
     def remove_wall(self, direction):
         """
@@ -66,8 +73,8 @@ class Tile:
         wall is already present on that side.
         """
 
-        if not self.walls[direction]:
-            self.walls[direction] = True
+        if self.walls[direction]:
+            self.walls[direction] = False
         else:
             warnings.warn('No wall on {} on {}'.format(direction,
                                                        self.location)+\
@@ -79,18 +86,11 @@ class Tile:
         """
         
         dirs = ['north','south','east','west']
-        n_walls = random.choice([0,1,2,3])
-        if n_walls == 3:
-            exclude = random.choice(dirs)
-            for d in [di for di in dirs if di != exclude]:
-                self.add_wall(d)
-        elif n_walls > 0:
-            walls = [random.choice(dirs) for i in range(n_walls)]
-            for w in walls:
-                self.add_wall(w)
-        else:
-            return
-            
+        n_walls = random.choice([0,1,2,2,3]) #slightly overweights 2
+
+        walls = random.sample(dirs, n_walls)
+        for w in walls:
+            self.add_wall(w)            
         
     def set_walls(self, walls):
         """
@@ -99,7 +99,7 @@ class Tile:
 
         self.walls = walls
 
-    def rotate(self, ange = 90):
+    def rotate(self, angle = 90):
         """
         Rotates the tile by angle. Angle must be evenly divisible
         by 90, but is otherwise unbounded.
@@ -123,15 +123,7 @@ class Tile:
         new_walls = {dirs[angle][k]: self.walls[k] for k in dirs[angle].keys()}
 
         self.set_walls(new_walls)
- 
-    def check_for_oaf(self):
-        """
-        Returns True if an Oaf is present on the tile,
-        otherwise False.
-        """
-
-        return bool(len([u for u in self.units if isinstance(u, Unit.Oaf)]))
-        
+         
     def set_owner(self,player_name = None):
         """
         Sets self.owned_by equal to player.name.
@@ -157,11 +149,25 @@ class Tile:
             return False
         elif test_occ and test_occ[0].name != player.name:
             return False
-        elif self.game.bases_near(self.location) > 0:
+        elif self.game.bases_near(self.location):
             return False
         else:
             return True
-        
+    
+    def check_for_oaf(self):
+        """
+        Checks whether tile has an oaf.
+        """
+
+        return bool(sum([isinstance(u, Unit.Oaf) for u in self.units]))
+
+    def update_oaf(self):
+        """
+        Sets self.has_oaf to current oaf status.
+        """
+
+        self.has_oaf = self.check_for_oaf()
+
     def collect_units(self):
         """
         Collects units on this tile. Called at the end of a

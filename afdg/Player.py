@@ -121,6 +121,7 @@ class Player:
         
         if u_type.lower() == 'oaf':
             to_add = Unit.Oaf(self.game, base_loc, self.name)
+            self.game[base_loc].has_oaf = True
         elif u_type.lower() == 'wizard':
             to_add = Unit.Wizard(self.game, base_loc, self.name)
         else:
@@ -138,6 +139,9 @@ class Player:
         test_base = self.game[location].can_add_base(self)
         if test_base:
             self.game[location].make_base(self)
+        else:
+            warnings.warn('Cannot add base on {}.'.format(location) +\
+                          ' Doing nothing.')
 
     def rotate(self, location, angle):
         """
@@ -244,7 +248,7 @@ class Player:
         if a wall already present.
         """
         
-        pass
+        self.game[location].add_wall(direction)
 
     def remove_wall(self, location, direction):
         """
@@ -252,4 +256,4 @@ class Player:
         Fails if no wall already present.
         """
         
-        pass
+        self.game[locatoin].remove_wall(direction)

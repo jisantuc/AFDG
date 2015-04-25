@@ -1,30 +1,32 @@
 from afdg import Game, Unit, Tile, Player
 
-g = Game.Game()
+def trade_tiles():
 
-def tile_info(location):
-    """
-    Prints game tile at location, whether that tile is a
-    base, who owns it, and any units on that tile.
-    """
+    g = Game.Game()
 
-    print g[location]
-    print g[location].is_base
-    print g[location].owned_by
-    print g[location].units
+    def tile_info(location):
+        """
+        Prints game tile at location, whether that tile is a
+        base, who owns it, and any units on that tile.
+        """
 
-g[1,2].add_wall('north')
-g[2,2].add_wall('south')
+        print g[location]
+        print g[location].is_base
+        print g[location].owned_by
+        print g[location].units
 
-g.players[0].place_base((1,2))
-g.players[0].add_unit('oaf',(1,2))
+    g[1,2].add_wall('north')
+    g[2,2].add_wall('south')
 
-tile_info((1,2))
-tile_info((2,2))
+    g.players[0].place_base((1,2))
+    g.players[0].add_unit('oaf',(1,2))
 
-print 'TRADING TILES (1,2) AND (2,2)'
+    tile_info((1,2))
+    tile_info((2,2))
 
-g.players[0].trade_tiles((1,2),(2,2))
+    print 'TRADING TILES (1,2) AND (2,2)'
 
-tile_info((1,2))
-tile_info((2,2))
+    g.players[0].trade_tiles((1,2),(2,2))
+
+    tile_info((1,2))
+    tile_info((2,2))
