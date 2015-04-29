@@ -87,6 +87,35 @@ class Player:
         
         return len(self.wizards_in_range_of(location))
 
+    def oafs_on(self, location):
+        """
+        Returns list of oafs on location.
+        """
+        
+        return [u for u in self.game[location].units if \
+                isinstance(u, Unit.Oaf)]
+
+    def n_oafs_on(self, location):
+        """
+        Counts number of oafs on location.
+        """
+
+        return len(self.oafs_on(location))
+
+    def moving_oafs_on(self, location):
+        """
+        Returns list of oafs on location who can move.
+        """
+
+        return [u for u in self.oafs_on(location) if not u.moved]
+
+    def n_moving_oafs_on(self, location):
+        """
+        Returns number of oafs on location who can move.
+        """
+
+        return len(self.moving_oafs_on(location))
+
     def can_invade(self, location):
         """
         Returns True if self can invade tile at location.
@@ -130,6 +159,25 @@ class Player:
             
         self.units.append(to_add)
         self.game[base_loc].units.append(to_add)        
+
+    def move(self, n_oafs, n_wizards, from_loc, to_loc):
+        """
+        Moves n_oafs and n_wizards from from_loc to to_loc.
+        If it would fail for any reasons, does nothing and returns
+        False.
+        """
+
+        #check whether invasion is possible
+        #check whether n_oafs present on from_loc
+        #check whether n_wizards present on from_loc
+        
+        #pop a list of oafs from moving oafs on from_loc
+        #move each of them to to_loc
+
+        #pop a list of wizards from moving wizards on from_loc
+        #move each of them to to_loc
+
+        pass
 
     def place_base(self, location):
         """

@@ -125,24 +125,28 @@ class Unit:
                 
         return no_walls(direction)
 
-    def move_unit(self, direction):
+    def set_direction(self, dir_or_loc):
+        if isinstance(direction, str):
+            try:
+                assert dir_or_loc in ['north','south','east','west']
+            except AssertionError as e:
+                warnings.warn('Direction {} not allowed'.format(direction))
+                return dir_or_loc
+
+        elif isinstance(direction, tuple):
+            direction = self.infer_direction(dir_or_loc)
+            if direction:
+                return direction
+            else:
+                return False
+
+    def move_unit(self, dir_or_loc):
         """
         Does the shared part of unit movement for wizards and oafs.
         """
 
-        if isinstance(direction, str):
-            try:
-                assert direction in ['north','south','east','west']
-            except AssertionError as e:
-                warnings.warn('Direction {} not allowed'.format(direction))
-                return
-            able = self.can_move(direction)
-
-        elif isinstance(direction, tuple):
-            direction = self.infer_direction(direction)
-            if not direction:
-                return False
-            able = self.can_move(direction)
+        direction = set_direction(dir_or_loc)
+        able = self.can_move(direction)
             
         if not able:
             return False
@@ -210,6 +214,11 @@ class Wizard(Unit):
         self.move_unit(direction)
         
         self.moved = True
+
+    def count_walls_between(self, direction):
+        """
+        Counts walls between self and tile in direction.
+        """
 
     def attack(self, location = None, direction = None):
         """
