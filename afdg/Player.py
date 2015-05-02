@@ -159,19 +159,21 @@ class Player:
 
         return len(self.attacking_wizards_on(location))
 
-    def can_invade(self, location):
+    def can_invade(self, location, attacking_with=None):
         """
         Returns True if self can invade tile at location.
         """
         
+        force = attacking_with if attacking_with else \
+                self.n_invading_units_near(location)
         target = self.game[location]
         occupation = target.occupied()
+
         if not occupation:
             return True
         elif occupation[0].name == self.name:
             return True
-        elif self.n_invading_units_near(location) >\
-             target.defended_by:
+        elif force > target.defended_by:
             return True
         else:
             return False             
@@ -212,8 +214,6 @@ class Player:
         does nothing and returns False.
         """
 
-        #check whether invasion is possible
-
         try:
             assert n_oafs <= self.n_moving_oafs_on(from_loc) and \
                    n_wizards <= self.n_moving_wizards_on(from_loc)
@@ -230,16 +230,18 @@ class Player:
                           ' Doing nothing.')
             return False
 
+        if not self.can_invade(to_loc, n_oafs + n_wizards):
+            warnings.warn('Inadequate units to invade.' +\
+                          ' Doing nothing.')
+            return False
+
         oafs_to_move = self.moving_oafs_on(from_loc)[:n_oafs]
         assert len(oafs_to_move) == n_oafs
-        if n_oafs > 1:
-            assert id(oafs_to_move[0]) != id(oafs_to_move[1])
 
         wizards_to_move = self.moving_wizards_on(from_loc)[:n_wizards]
         assert len(wizards_to_move) == n_wizards
 
-        for u,l in zip(oafs_to_move + wizards_to_move,
-                       [to_loc] * len(oafs_to_move + wizards_to_move)):
+        for u in oafs_to_move + wizards_to_move:
             u.move(l)
 
     def place_base(self, location):
