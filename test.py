@@ -30,3 +30,41 @@ def trade_tiles():
 
     tile_info((1,2))
     tile_info((2,2))
+
+def move_units():
+    g = Game.Game()
+    no_walls = {'north': False,
+                'south': False,
+                'east': False,
+                'west': False}
+
+    for t in g.tiles:
+        t.set_walls(no_walls)
+
+    g.players[0].place_base((2,2))
+    g.players[0].add_unit('oaf',(2,2))
+
+    def info(loc):
+        print g[loc].has_oaf
+        print g[loc].occupied()
+
+    g[2,2].units[0].move('north')
+    info((2,2))
+    info((2,1))
+    
+    g[2,1].units[0].move('east')
+    info((3,1))
+    info((2,1))
+
+    g[3,1].units[0].move('south')
+    info((3,2))
+    info((3,1))
+
+    g[3,2].units[0].move('west')
+    info((2,2))
+    info((3,2))
+
+    bad = g[2,2].units[0].move((5,5))
+    print bad
+    
+        
