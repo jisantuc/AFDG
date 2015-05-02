@@ -116,6 +116,49 @@ class Player:
 
         return len(self.moving_oafs_on(location))
 
+    def wizards_on(self, location):
+        """
+        Returns list of wizards on location.
+        """
+
+        return [u for u in self.game[location].units if \
+                isinstance(u, Unit.Wizard)]
+
+    def n_wizards_on(self, location):
+        """
+        Returns number of wizards on location.
+        """
+
+        return len(self.wizards_on(location))
+
+    def moving_wizards_on(self, location):
+        """
+        Returns list of wizards on location who can move.
+        """
+
+        return [u for u in self.wizards_on(location) if not u.moved]
+
+    def n_moving_wizards_on(self, location):
+        """
+        Returns number of wizards on location who can move.
+        """
+
+        return len(self.moving_wizards_on(location))
+
+    def attacking_wizards_on(self, location):
+        """
+        Returns list of wizards on location who can attack.
+        """
+
+        return [u for u in self.wizards_on(location) if not u.attacked]
+
+    def n_attacking_wizards_on(self, location):
+        """
+        Returns number of wizards on location who can attack.
+        """
+
+        return len(self.attacking_wizards_on(location))
+
     def can_invade(self, location):
         """
         Returns True if self can invade tile at location.
@@ -142,6 +185,7 @@ class Player:
         if n:
             for i in range(n):
                 self.add_unit(u_type, base_loc)
+            return
 
         if not self.game[base_loc].is_base:
             warnings.warn('Units can only be added on bases.' +\
@@ -163,21 +207,40 @@ class Player:
     def move(self, n_oafs, n_wizards, from_loc, to_loc):
         """
         Moves n_oafs and n_wizards from from_loc to to_loc.
-        If it would fail for any reasons, does nothing and returns
-        False.
+        from_loc and to_loc must be specified as tuples, otherwise
+        warns and returns False. If move would fail for any reason,
+        does nothing and returns False.
         """
 
         #check whether invasion is possible
-        #check whether n_oafs present on from_loc
-        #check whether n_wizards present on from_loc
-        
-        #pop a list of oafs from moving oafs on from_loc
-        #move each of them to to_loc
 
-        #pop a list of wizards from moving wizards on from_loc
-        #move each of them to to_loc
+        try:
+            assert n_oafs <= self.n_moving_oafs_on(from_loc) and \
+                   n_wizards <= self.n_moving_wizards_on(from_loc)
+        except AssertionError as e:
+            warnings.warn('Inadequate units for command.' +\
+                          ' Doing nothing.')
+            return False
 
-        pass
+        try:
+            assert isinstance(from_loc, tuple) and \
+                   isinstance(to_loc, tuple)
+        except AssertionError as e:
+            warnings.warn('from_loc and to_loc must be tuples.' +\
+                          ' Doing nothing.')
+            return False
+
+        oafs_to_move = self.moving_oafs_on(from_loc)[:n_oafs]
+        assert len(oafs_to_move) == n_oafs
+        if n_oafs > 1:
+            assert id(oafs_to_move[0]) != id(oafs_to_move[1])
+
+        wizards_to_move = self.moving_wizards_on(from_loc)[:n_wizards]
+        assert len(wizards_to_move) == n_wizards
+
+        for u,l in zip(oafs_to_move + wizards_to_move,
+                       [to_loc] * len(oafs_to_move + wizards_to_move)):
+            u.move(l)
 
     def place_base(self, location):
         """
@@ -304,4 +367,4 @@ class Player:
         Fails if no wall already present.
         """
         
-        self.game[locatoin].remove_wall(direction)
+        self.game[location].remove_wall(direction)

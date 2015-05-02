@@ -9,7 +9,7 @@ import Tile
 
 class Game(object):
 
-    def __init__(self, n_walls = 15, n_players = 2, n_turns = 8, grid_size = (4,4)):
+    def __init__(self, n_players = 2, n_turns = 8, grid_size = (4,4)):
         """
         Initializes game.
 
@@ -24,13 +24,11 @@ class Game(object):
 
         """
 
-        assert type(n_walls) == int
         assert type(n_turns) == int
         assert type(grid_size) == tuple
         assert len(grid_size) == 2
         assert type(grid_size[0]) == int and type(grid_size[1]) == int
-                        
-        self.n_walls = n_walls
+
         self.n_players = n_players
         self.n_turns = n_turns
         self.phase = 'INITIAL'

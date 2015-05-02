@@ -42,6 +42,7 @@ class Unit:
 
     def infer_direction(self, location):
         test = (self.x - location[0], self.y - location[1])
+
         if test == (-1,0):
             return 'east'
         elif test == (1,0):
@@ -53,7 +54,7 @@ class Unit:
         else:
             return False        
 
-    def can_move(self, direction):
+    def can_move(self, dir_or_loc):
         """
         Verifies that a unit can move in a particular direction by
         checking:
@@ -76,15 +77,16 @@ class Unit:
         whether the unit can move in direction instead of to location.
         """
 
-        if isinstance(direction, str):
+        if isinstance(dir_or_loc, str):
             try:
-                assert direction in ['north','south','east','west']
+                assert dir_or_loc in ['north','south','east','west']
+                direction = dir_or_loc
             except AssertionError as e:
-                warnings.warn('Direction {} not allowed'.format(direction))
+                warnings.warn('Direction {} not allowed'.format(dir_or_loc))
                 return False
 
-        elif isinstance(direction, tuple):
-            direction = self.infer_direction(direction)
+        elif isinstance(dir_or_loc, tuple):
+            direction = self.infer_direction(dir_or_loc)
             if not direction:
                 return False
 
@@ -126,26 +128,32 @@ class Unit:
         return no_walls(direction)
 
     def set_direction(self, dir_or_loc):
-        if isinstance(direction, str):
+        """
+        Returns string of direction based on current location
+        as either tuple or string.
+        """
+
+        if isinstance(dir_or_loc, str):
             try:
                 assert dir_or_loc in ['north','south','east','west']
-            except AssertionError as e:
-                warnings.warn('Direction {} not allowed'.format(direction))
                 return dir_or_loc
+            except AssertionError as e:
+                warnings.warn('Direction {} not allowed'.format(dir_or_loc))
+                return False
 
-        elif isinstance(direction, tuple):
+        elif isinstance(dir_or_loc, tuple):
             direction = self.infer_direction(dir_or_loc)
             if direction:
                 return direction
             else:
                 return False
 
-    def move_unit(self, dir_or_loc):
+    def move_unit(self, loc):
         """
         Does the shared part of unit movement for wizards and oafs.
         """
 
-        direction = set_direction(dir_or_loc)
+        direction = self.set_direction(loc)
         able = self.can_move(direction)
             
         if not able:
@@ -177,7 +185,7 @@ class Oaf(Unit):
         return 'Oaf on ({X},{Y}).'.format(X=self.x,
                                           Y=self.y)
     
-    def move(self, direction):
+    def move(self, loc):
         """
         Moves this unit in direction, if allowed. Direction
         must be a string (nsew) or a tuple.
@@ -185,7 +193,7 @@ class Oaf(Unit):
 
         old_loc = (self.x, self.y)
 
-        self.move_unit(direction)
+        self.move_unit(loc)
 
         self.moved = True
         self.attacked = True
@@ -219,6 +227,8 @@ class Wizard(Unit):
         """
         Counts walls between self and tile in direction.
         """
+
+        pass
 
     def attack(self, location = None, direction = None):
         """

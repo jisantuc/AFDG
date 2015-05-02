@@ -42,6 +42,7 @@ class Tile:
         or False if no player is occupying the tile.
         """
 
+        self.defended_by = self.count_defenders()
         return (self.units[0].player, self.defended_by) if self.units else False
 
     def count_defenders(self):
