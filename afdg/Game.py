@@ -126,3 +126,5 @@ class Game(object):
 
         for t in self.tiles:
             t.cleanup()
+        for p in self.players:
+            p.cleanup()

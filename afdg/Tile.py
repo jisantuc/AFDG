@@ -214,15 +214,16 @@ class Tile:
         Removes all units and stores any oafs in a list to return.
         """
 
-        player = self.units[0].player
-        for u in self.units:
-            player.units.remove(u)
+        player = self.units[0].player if self.units else None
+        if player:
+            for u in self.units:
+                player.units.remove(u)
 
-        if self.is_base:
-            player.n_bases -= 1
+                if self.is_base:
+                    player.n_bases -= 1
 
-        if player.n_bases == 0:
-            return []
+                if player.n_bases == 0:
+                    return []
             
         return [self.remove_unit(u) for u in self.units \
                 if isinstance(u, Unit.Oaf)]

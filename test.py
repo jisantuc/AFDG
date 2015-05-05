@@ -10,7 +10,7 @@ g.players[0].place_base((2,2))
 g.players[0].add_unit('oaf', (2,2), 4)
 g.players[0].add_unit('wizard', (2,2), 2)
 
-g.players[1].place_base((3,3))
+g.players[1].place_base((3,3), initial = True)
 g.players[1].add_unit('oaf', (3,3))
 g.players[1].trade_tiles((3,3), (3,2))
 g.players[1].place_base((1,1))

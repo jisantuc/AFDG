@@ -313,12 +313,11 @@ class Player:
         test_base = self.game[location].can_add_base(self)
         if test_base:
             self.game[location].make_base(self)
+            self.n_bases += 1
         else:
             warnings.warn('Cannot add base on {}.'.format(location) +\
                           ' Doing nothing.')
             return False
-
-        self.n_bases += 1
 
         if not initial:
             self.actions['place base'] = True
