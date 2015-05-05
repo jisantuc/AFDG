@@ -14,6 +14,7 @@ class Player:
         self.game = game
         self.n_units = n_units
         self.units = []
+        self.n_bases = 0
         self.actions = {
             'rotate': False,
             'place base': False,
@@ -299,7 +300,7 @@ class Player:
                     if u.player.add_unit('oaf',new_loc) is None:
                         removed.remove(u)
 
-    def place_base(self, location):
+    def place_base(self, location, initial=False):
         """
         Places a new base on location.
         """
@@ -317,7 +318,11 @@ class Player:
                           ' Doing nothing.')
             return False
 
-        self.last_action = 'place base'
+        self.n_bases += 1
+
+        if not initial:
+            self.actions['place base'] = True
+            self.last_action = 'place base'
 
     def rotate(self, location, angle):
         """
@@ -331,6 +336,7 @@ class Player:
 
         self.game[location].rotate(angle)
 
+        self.actions['rotate'] = True
         self.last_action = 'rotate'
 
     def oaf_reenforce(self, location, number):
@@ -367,6 +373,7 @@ class Player:
              isinstance(number, int):
             self.add_unit('oaf', location, number)
 
+        self.actions['oaf reenforce'] = True
         self.last_action = 'oaf reenforce'
 
     def wizard_reenforce(self, location, split = False):
@@ -403,6 +410,7 @@ class Player:
              isinstance(number, int):
             self.add_unit('wizard', location, number)
 
+        self.actions['wizards reenforce'] = True
         self.last_action = 'wizards reenforce'
 
     def trade_tiles(self, location1, location2):
@@ -445,7 +453,8 @@ class Player:
 
             self.game[loc].update_oaf()
             self.game[loc].defended_by = self.game[loc].count_defenders()
-                  
+
+        self.actions['trade tiles'] = True
         self.last_action = 'trade tiles'
 
     def place_wall(self, location, direction):
@@ -461,6 +470,7 @@ class Player:
         
         self.game[location].add_wall(direction)
 
+        self.actions['place wall'] = True
         self.last_action = 'place wall'
 
     def remove_wall(self, location, direction):
@@ -476,6 +486,7 @@ class Player:
         
         self.game[location].remove_wall(direction)
 
+        self.actions['remove wall'] = True
         self.last_action = 'remove wall'
 
     def cleanup(self):

@@ -117,3 +117,12 @@ class Game(object):
         """
 
         pass
+
+    def cleanup(self):
+        """
+        Resets moved status of all units in game by iterating
+        over tiles.
+        """
+
+        for t in self.tiles:
+            t.cleanup()

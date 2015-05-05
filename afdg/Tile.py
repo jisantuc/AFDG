@@ -215,8 +215,15 @@ class Tile:
         """
 
         player = self.units[0].player
-        for u in self.units[]:
+        for u in self.units:
             player.units.remove(u)
+
+        if self.is_base:
+            player.n_bases -= 1
+
+        if player.n_bases == 0:
+            return []
+            
         return [self.remove_unit(u) for u in self.units \
                 if isinstance(u, Unit.Oaf)]
 
