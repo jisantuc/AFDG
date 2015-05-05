@@ -63,7 +63,7 @@ class Game(object):
             warnings.warn('Grid location out of range. Doing nothing.')
             return
 
-        return [t for t in self.tiles if t.location == xy].pop()
+        return [t for t in self.tiles if t.location == xy][0]
 
     def find_player(self, player_name):
         """

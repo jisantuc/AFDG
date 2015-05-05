@@ -241,12 +241,19 @@ class Player:
         wizards_to_move = self.moving_wizards_on(from_loc)[:n_wizards]
         assert len(wizards_to_move) == n_wizards
 
+        
+        removed = self.game[to_loc].conquered()
+        if removed:
+            while removed:
+                u = removed[0]
+                new_loc = tuple([int(s) for s in raw_input(
+                    'New location\n'
+                ).lstrip('(').rstrip(')').split(',')])
+                if u.player.add_unit('oaf',new_loc) is None:
+                    removed.remove(u)        
+
         for u in oafs_to_move + wizards_to_move:
             u.move(to_loc)
-
-        ####################################
-        # TO ADD:
-        # CONQUERED THING FROM move_from_several
 
     def move_from_several(self, n_oafs, n_wizards, from_locs, to_loc):
         """
