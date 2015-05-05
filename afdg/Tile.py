@@ -214,5 +214,17 @@ class Tile:
         Removes all units and stores any oafs in a list to return.
         """
 
+        player = self.units[0].player
+        for u in self.units[]:
+            player.units.remove(u)
         return [self.remove_unit(u) for u in self.units \
                 if isinstance(u, Unit.Oaf)]
+
+    def cleanup(self):
+        """
+        Sets moved to False for all units on self and counts defenders.
+        """
+
+        for u in self.units:
+            u.moved = False
+        self.defended_by = self.count_defenders()

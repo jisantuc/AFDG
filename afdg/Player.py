@@ -14,6 +14,16 @@ class Player:
         self.game = game
         self.n_units = n_units
         self.units = []
+        self.actions = {
+            'rotate': False,
+            'place base': False,
+            'oafs reenforce': False,
+            'wizards reenforce': False,
+            'place wall': False,
+            'remove wall': False,
+            'trade tiles': False
+        }
+        self.last_action = None
 
     def __getitem__(self, location):
         """
@@ -289,26 +299,39 @@ class Player:
                     if u.player.add_unit('oaf',new_loc) is None:
                         removed.remove(u)
 
-                    
-
     def place_base(self, location):
         """
         Places a new base on location.
         """
         
+        if self.actions['place base']:
+            warnings.warn('Cannot take same action twice in a row.' +\
+                          ' Doing nothing.')
+            return False
+
         test_base = self.game[location].can_add_base(self)
         if test_base:
             self.game[location].make_base(self)
         else:
             warnings.warn('Cannot add base on {}.'.format(location) +\
                           ' Doing nothing.')
+            return False
+
+        self.last_action = 'place base'
 
     def rotate(self, location, angle):
         """
         Rotates tile at location by angle.
         """
         
+        if self.actions['rotate']:
+            warnings.warn('Cannot take same action twice in a row.' +\
+                          ' Doing nothing.')
+            return False
+
         self.game[location].rotate(angle)
+
+        self.last_action = 'rotate'
 
     def oaf_reenforce(self, location, number):
         """
@@ -316,6 +339,11 @@ class Player:
         lists. Locations must be locations where the player has a
         base.
         """
+
+        if self.actions['oaf reenforce']:
+            warnings.warn('Cannot take same action twice in a row.' +\
+                          ' Doing nothing.')
+            return False
 
         try:
             assert len(location) <= 3
@@ -339,13 +367,20 @@ class Player:
              isinstance(number, int):
             self.add_unit('oaf', location, number)
 
+        self.last_action = 'oaf reenforce'
+
     def wizard_reenforce(self, location, split = False):
         """
         Reenforces wizards. Takes locations and numbers as length
         3 lists. Locations must be locations where the player has
         a base.
         """
-        
+
+        if self.actions['wizards reenforce']:
+            warnings.warn('Cannot take same action twice in a row.' +\
+                          ' Doing nothing.')
+            return False
+
         try:
             assert len(location) <= 2
         except AssertionError as e:
@@ -368,12 +403,19 @@ class Player:
              isinstance(number, int):
             self.add_unit('wizard', location, number)
 
+        self.last_action = 'wizards reenforce'
+
     def trade_tiles(self, location1, location2):
         """
         Swaps the positions of orthogonally adjacent tiles at
         location1 and location2 including everything on them
         (walls, units, bases).
         """
+
+        if self.actions['trade tiles']:
+            warnings.warn('Cannot take same action twice in a row.' +\
+                          ' Doing nothing.')
+            return False
         
         if sum([abs(location1[0] - location2[0]),
                 abs(location1[1] - location2[1])]) > 1:
@@ -404,19 +446,45 @@ class Player:
             self.game[loc].update_oaf()
             self.game[loc].defended_by = self.game[loc].count_defenders()
                   
+        self.last_action = 'trade tiles'
 
     def place_wall(self, location, direction):
         """
         Attempts to add wall at location on side direction. Fails
         if a wall already present.
         """
+
+        if self.actions['place wall']:
+            warnings.warn('Cannot take same action twice in a row.' +\
+                          ' Doing nothing.')
+            return False
         
         self.game[location].add_wall(direction)
+
+        self.last_action = 'place wall'
 
     def remove_wall(self, location, direction):
         """
         Attempts to remove a wall at location from side direction.
         Fails if no wall already present.
         """
+
+        if self.actions['remove wall']:
+            warnings.warn('Cannot take same action twice in a row.' +\
+                          ' Doing nothing.')
+            return False
         
         self.game[location].remove_wall(direction)
+
+        self.last_action = 'remove wall'
+
+    def cleanup(self):
+        """
+        Resets self.actions dict to False for everything but last
+        action. Counts units.
+        """
+
+        for k in self.actions.keys():
+            self.actions[k] = True if k == self.last_action else False
+
+        self.n_units = len(self.units)
