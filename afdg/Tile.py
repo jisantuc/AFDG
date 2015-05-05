@@ -207,3 +207,12 @@ class Tile:
         """
 
         self.units.remove(u)
+        return u
+
+    def conquered(self):
+        """
+        Removes all units and stores any oafs in a list to return.
+        """
+
+        return [self.remove_unit(u) for u in self.units \
+                if isinstance(u, Unit.Oaf)]

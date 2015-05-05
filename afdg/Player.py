@@ -70,7 +70,7 @@ class Player:
         moved nor attacked in the current round.
         """
         
-        return len(self.attacking_units_near(location))
+        return len(self.invading_units_near(location))
 
     def wizards_in_range_of(self, location):
         """
@@ -242,7 +242,47 @@ class Player:
         assert len(wizards_to_move) == n_wizards
 
         for u in oafs_to_move + wizards_to_move:
-            u.move(l)
+            u.move(to_loc)
+
+        ####################################
+        # TO ADD:
+        # CONQUERED THING FROM move_from_several
+
+    def move_from_several(self, n_oafs, n_wizards, from_locs, to_loc):
+        """
+        Moves n_oafs and n_wizards from from_locs to to_loc if
+        possible. Adds up available units from each and checks to
+        make sure invasion is possible with can_invade's
+        attacking_with parameter.
+        """
+
+        try:
+            for i,l in enumerate(from_locs):
+                assert n_oafs[i] <= self.n_moving_oafs_on(l) and \
+                       n_wizards[i] <= self.n_moving_wizards_on(l)
+        except AssertionError as e:
+            warnings.warn('Inadequate units on {}.'.format(l) +\
+                          ' Doing nothing.')
+            return False
+
+        force = sum(n_oafs) + sum(n_wizards)
+
+        if self.can_invade(to_loc, attacking_with = force):
+            removed = self.game[to_loc].conquered()
+            for i, l in enumerate(from_locs):
+                self.move(n_oafs = n_oafs[i], n_wizards = n_wizards[i],
+                          from_loc = l, to_loc = to_loc)
+
+            if removed:
+                while removed:
+                    u = removed[0]
+                    new_loc = [int(s) for s in raw_input(
+                        'New location\n'
+                        ).split(',')]
+                    if u.player.add_unit('oaf',new_loc) is None:
+                        removed.remove(u)
+
+                    
 
     def place_base(self, location):
         """
@@ -353,6 +393,9 @@ class Player:
 
             for u in self.game[loc].units:
                 u.set_location(loc)
+
+            self.game[loc].update_oaf()
+            self.game[loc].defended_by = self.game[loc].count_defenders()
                   
 
     def place_wall(self, location, direction):
