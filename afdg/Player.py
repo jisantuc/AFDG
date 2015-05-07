@@ -34,12 +34,16 @@ class Player:
         
         return [u for u in self.units if (u.x, u.y) == location]
 
+    def __repr__(self):
+        return self.name
+
     def count_tiles(self):
         """
         Counts tiles occupied by self.
         """
 
-        return len([t for t in self.game.tiles if t.occupied()[0] == self])
+        return len([t for t in self.game.tiles if t.occupied() and \
+                    t.occupied()[0] == self])
 
     def units_near(self, location):
         """
