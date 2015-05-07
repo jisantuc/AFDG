@@ -128,3 +128,14 @@ class Game(object):
             t.cleanup()
         for p in self.players:
             p.cleanup()
+
+        ###reset turn order, sorting players first by
+        turn_data = [(p, p.count_tiles(), p.n_units) \
+                     for p in self.player_order]
+
+        new_order = sorted(turn_data, key = lambda x: (x[1],x[2]))
+        print new_order
+
+        self.player_order = [n[0] for n in new_order]
+        
+        

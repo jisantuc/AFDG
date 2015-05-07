@@ -13,6 +13,7 @@ class Player:
         self.name = name
         self.game = game
         self.n_units = n_units
+        self.n_tiles = 0
         self.units = []
         self.n_bases = 0
         self.actions = {
@@ -32,6 +33,13 @@ class Player:
         """
         
         return [u for u in self.units if (u.x, u.y) == location]
+
+    def count_tiles(self):
+        """
+        Counts tiles occupied by self.
+        """
+
+        return len([t for t in self.game.tiles if t.occupied()[0] == self])
 
     def units_near(self, location):
         """

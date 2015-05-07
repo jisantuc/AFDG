@@ -67,7 +67,6 @@ class Unit:
         able to, then if they opt to.
 
         If 1 and 2 are false and invasion is unnecessary, returns True.
-        If 1 and 2 are false and invasion is possible, returns 'INVADE'.
         Otherwise returns False.
 
         One of location or direction must be specified. If location is
@@ -223,7 +222,7 @@ class Wizard(Unit):
         
         self.moved = True
 
-    def count_walls_between(self, direction):
+    def count_walls_between(self, dir_or_loc):
         """
         Counts walls between self and tile in direction.
         """
