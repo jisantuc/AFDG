@@ -224,10 +224,37 @@ class Wizard(Unit):
 
     def count_walls_between(self, dir_or_loc):
         """
-        Counts walls between self and tile in direction.
+        Counts walls between self and tile in direction. Returns False
+        if (self.x, self.y) and dir_or_loc are not adjacent or if
+        dir_or_loc is a direction not in NSEW.
         """
 
-        pass
+        if isinstance(dir_or_loc, tuple):
+            direction = self.infer_direction(dir_or_loc)
+        elif isinstance(dir_or_loc, str) and \
+             dir_or_loc in ['north','south','east','west']:
+            direction = dir_or_loc
+        else:
+            warnings.warn('Cannot interpret {}.'.format(dir_or_loc) +\
+                          ' Doing nothing.')
+            return False
+
+        if not direction:
+            return False
+
+        if direction == 'north':
+            return self.game[self.x, self.y].walls['north'] +\
+                   self.game[self.x, self.y - 1].walls['south']
+        elif direction == 'south':
+            return self.game[self.x, self.y].walls['south'] +\
+                   self.game[self.x, self.y + 1].walls['north']
+        elif direction == 'east':
+            return self.game[self.x, self.y].walls['east'] +\
+                   self.game[self.x + 1, self.y].walls['west']
+        else:
+            return self.game[self.x, self.y].walls['west'] +\
+                   self.game[self.x - 1, self.y].walls['east']
+            
 
     def attack(self, location = None, direction = None):
         """
