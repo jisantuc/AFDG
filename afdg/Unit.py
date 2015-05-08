@@ -256,8 +256,25 @@ class Wizard(Unit):
                    self.game[self.x - 1, self.y].walls['east']
             
 
-    def attack(self, location = None, direction = None):
+    def attack(self, dir_or_loc, target = 'oaf'):
         """
-        Attacks location, possibly with help?
+        Attacks location. Combined attack with wizards from
+        more than one location implemented in Player class.
+        Returns value equal to attacking strength for this
+        wizard for location.
+
+        self.attacked set to True from calling player.
+
+        Defaults to targeting an oaf.
         """
-        pass
+        
+        if not self.infer_direction(dir_or_loc):
+            return 0
+        
+        walls_between = self.count_walls_between(dir_or_loc)
+        if walls_between == 0:
+            return 1
+        elif walls_between == 1:
+            return 0.5
+        else:
+            return 0

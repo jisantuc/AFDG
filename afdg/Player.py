@@ -312,6 +312,23 @@ class Player:
                     if u.player.add_unit('oaf',new_loc) is None:
                         removed.remove(u)
 
+    def attack_with_wizards(self, n_wizards, w_locs, location, targets):
+        """
+        Attacks location with wizards located on w_locs (list).
+
+        Checks whether units listed in targets ('oaf' or 'wizard')
+        are present on location. Returns False if they are not.
+
+        Sets w.attacked = True for all w in n_wizards (list, matching up
+        to number of wizards to attack with from each location in
+        w_locs).
+
+        Gives defending player the opportunity to redeploy oafs to
+        their bases if any oafs are defeated.
+        """
+
+        pass
+
     def place_base(self, location, initial=False):
         """
         Places a new base on location.
