@@ -199,6 +199,23 @@ class Oaf(Unit):
         self.game[self.x, self.y].update_oaf()
         self.game[old_loc].update_oaf()
 
+    def die(self):
+        """
+        Kills this unit and removes it from player's unit list and
+        current location's unit list. Also prompts owning player to
+        place an oaf on another location.
+        """
+
+        self.game[self.x, self.y].units.remove(self)
+        self.player.units.remove(self)
+
+        if self.player.n_bases > 0:
+            new_loc = tuple([int(s) for s in raw_input(
+                    'New location\n'
+                ).lstrip('(').rstrip(')').split(',')])
+            self.player.add_unit('oaf', new_loc)
+
+
 class Wizard(Unit):
     """
     Subclass Unit. Includes the move method, which sets
@@ -256,7 +273,7 @@ class Wizard(Unit):
                    self.game[self.x - 1, self.y].walls['east']
             
 
-    def attack(self, dir_or_loc, target = 'oaf'):
+    def attack(self, dir_or_loc):
         """
         Attacks location. Combined attack with wizards from
         more than one location implemented in Player class.
@@ -264,8 +281,6 @@ class Wizard(Unit):
         wizard for location.
 
         self.attacked set to True from calling player.
-
-        Defaults to targeting an oaf.
         """
         
         if not self.infer_direction(dir_or_loc):
@@ -273,10 +288,17 @@ class Wizard(Unit):
         
         walls_between = self.count_walls_between(dir_or_loc)
         if walls_between == 0:
-            self.attacked = True
             return 1
         elif walls_between == 1:
-            self.attacked = True
             return 0.5
         else:
             return 0
+
+    def die(self):
+        """
+        Kills this unit and removes it from player's unit list and
+        current location's unit list.
+        """
+
+        self.game[self.x, self.y].units.remove(self)
+        self.player.units.remove(self)

@@ -1,4 +1,6 @@
 import warnings
+import itertools
+
 import Unit
 
 class Player:
@@ -327,7 +329,46 @@ class Player:
         their bases if any oafs are defeated.
         """
 
-        pass
+        try:
+            check_targets = [t in ['oaf','wizard'] for t in targets]
+            assert all(check_targets)
+        
+        except AssertionError:
+            warnings.warn('Bad target. Doing nothing.')
+            return False
+
+        try:
+            wizards = list(itertools.chain(
+                *[self.attacking_wizards_on(l)[-n:] for n, l in zip(
+                    n_wizards, w_locs
+                    )]
+                ))
+
+            assert sum([w.attack(location) for w in wizards]) >= len(targets)
+
+
+        except IndexError:
+            warnings.warn('Inadequate wizards on one of those.' +\
+                          ' Doing nothing.')
+            return False
+
+        except AssertionError:
+            warnings.warn('Too many targets for attacking strength.' +\
+                          ' Doing nothing.')
+            return False
+
+        n_o = len([t for t in targets if t == 'oaf'])
+        oafs_attacked = self.game[location].oafs_on()[-n_o:]
+
+        n_w = len([t for t in targets if t == 'wizard'])
+        wizards_attacked = self.game[location].wizards_on()[-n_w:]
+
+        for u in oafs_attacked + wizards_attacked:
+            u.die()
+
+        for w in wizards:
+            w.attacked = True
+
 
     def place_base(self, location, initial=False):
         """
