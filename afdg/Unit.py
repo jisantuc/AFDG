@@ -273,8 +273,10 @@ class Wizard(Unit):
         
         walls_between = self.count_walls_between(dir_or_loc)
         if walls_between == 0:
+            self.attacked = True
             return 1
         elif walls_between == 1:
+            self.attacked = True
             return 0.5
         else:
             return 0

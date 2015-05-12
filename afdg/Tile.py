@@ -54,6 +54,20 @@ class Tile:
 
         return len(self.units) if self.has_oaf else False
 
+    def oafs_on(self):
+        """
+        Returns list of oafs on self.
+        """
+
+        return [u for u in self.units if isinstance(u, Unit.Oaf)]
+
+    def wizards_on(self):
+        """
+        Returns list of wizards on self.
+        """
+
+        return [u for u in self.units if isinstance(u, Unit.Wizard)]
+
     def add_wall(self, direction):
         """
         Adds a wall to this tile on side direction if no wall
