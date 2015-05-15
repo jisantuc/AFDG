@@ -568,3 +568,6 @@ class Player:
             self.actions[k] = True if k == self.last_action else False
 
         self.n_units = len(self.units)
+        for u in self.units:
+            u.attacked = False
+            u.moved = False

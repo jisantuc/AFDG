@@ -84,6 +84,18 @@ class Game(object):
         
         self.units = us
 
+    def loc_in_grid(self, location):
+        """
+        Checks whether a location is in the game's grid. Returns
+        True if this is the case, otherwise False.
+        """
+
+        if location[0] < self.grid_size[0] and\
+           location[1] < self.grid_size[1]:
+            return True
+        else:
+            return False
+
     def bases_near(self, location):
         """
         Counts number of bases orthogonally adjacent to location.
@@ -94,7 +106,8 @@ class Game(object):
                    (location[0], location[1] + 1),
                    (location[0], location[1] - 1)]
 
-        return bool(sum([self[t].is_base if self[t] else 0 for t in targets]))
+        return bool(sum([self[t].is_base if self.loc_in_grid(t) \
+                         else 0 for t in targets]))
 
     def MAR(self, player):
         """
@@ -129,7 +142,6 @@ class Game(object):
         for p in self.players:
             p.cleanup()
 
-        ###reset turn order, sorting players first by
         turn_data = [(p, p.count_tiles(), p.n_units) \
                      for p in self.player_order]
 
