@@ -380,9 +380,11 @@ class Player:
                           ' Doing nothing.')
             return False
 
-        test_base = self.game[location].can_add_base(self)
+        target = self.game[location]
+        test_base = target.can_add_base(self)
+
         if test_base:
-            self.game[location].make_base(self)
+            target.make_base(self)
             self.n_bases += 1
         else:
             warnings.warn('Cannot add base on {}.'.format(location) +\
