@@ -358,10 +358,10 @@ class Player:
             return False
 
         n_o = len([t for t in targets if t == 'oaf'])
-        oafs_attacked = self.game[location].oafs_on()[-n_o:]
+        oafs_attacked = self.game[location].oafs_on()[-n_o:] if n_o else []
 
         n_w = len([t for t in targets if t == 'wizard'])
-        wizards_attacked = self.game[location].wizards_on()[-n_w:]
+        wizards_attacked = self.game[location].wizards_on()[-n_w:] if n_w else []
 
         for u in oafs_attacked + wizards_attacked:
             u.die()
