@@ -131,6 +131,24 @@ class Game(object):
 
         pass
 
+    def declare_winner(self, turn_data):
+        """
+        Determines and returns winning player.
+        """
+
+        ties = [(p1, p2) for p1, p2 in zip(self.players, self.players) if\
+                p1.count_tiles() == p2.count_tiles() and\
+                p1.n_units == p2.n_units and\
+                p1 != p2]
+
+        if not ties:
+            return turn_data[-1]
+        elif turn_data[-1][0] not in [t[0] for t in ties] +\
+             [t[1] for t in ties]:
+            return turn_data[-1]
+        else:
+            return 'Tie for victory. DISASTER'
+
     def cleanup(self):
         """
         Resets moved status of all units in game by iterating
@@ -148,5 +166,7 @@ class Game(object):
         new_order = sorted(turn_data, key = lambda x: (x[1],x[2]))
 
         self.player_order = [n[0] for n in new_order]
-        
-        
+        if turn == 8:
+            self.declare_winner(turn_data)
+        else:
+            self.turn += 1
