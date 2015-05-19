@@ -269,16 +269,21 @@ class Player:
         
         removed = self.game[to_loc].conquered()
         if removed:
+            att_flag = True
             while removed:
                 u = removed[0]
                 new_loc = tuple([int(s) for s in raw_input(
                     'New location\n'
                 ).lstrip('(').rstrip(')').split(',')])
                 if u.player.add_unit('oaf',new_loc) is None:
-                    removed.remove(u)        
+                    removed.remove(u)
+        else:
+            att_flag = False
 
         for u in oafs_to_move + wizards_to_move:
             u.move(to_loc)
+            if att_flag and isinstance(u, Unit.Wizard):
+                u.attacked = True
 
     def move_from_several(self, n_oafs, n_wizards, from_locs, to_loc):
         """
