@@ -90,8 +90,8 @@ class Game(object):
         True if this is the case, otherwise False.
         """
 
-        if location[0] < self.grid_size[0] and\
-           location[1] < self.grid_size[1]:
+        if max(location) < max(self.grid_size) and\
+           min(location) >= 0:
             return True
         else:
             return False
