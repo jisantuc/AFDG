@@ -152,7 +152,8 @@ class Tile:
         player.
         """
 
-        self.set_owner(self.units[0].player.name if self.units else None)
+        if not self.is_base:
+            self.set_owner(self.units[0].player.name if self.units else None)
 
     def make_base(self,player):
         """
@@ -231,15 +232,16 @@ class Tile:
         self.units.remove(u)
         return u
 
-    def conquered(self):
+    def conquered(self, check):
         """
         Removes all units and stores any oafs in a list to return.
         """
 
-        player = self.units[0].player if self.units else None
+        player = self.game.find_player(self.owned_by) if self.owned_by\
+                 else None
         to_return = []
 
-        if player and player != self.owned_by:
+        if player and player != check:
             
             to_return.extend([u for u in self.units if isinstance(
                 u, Unit.Oaf
@@ -247,11 +249,12 @@ class Tile:
 
             if self.is_base:
                 player.n_bases -= 1
+                self.is_base = False
 
             if player.n_bases == 0:
                 return []
 
-        elif player == self.owned_by:
+        elif player == check:
             to_return.extend(self.units)
             
         return to_return

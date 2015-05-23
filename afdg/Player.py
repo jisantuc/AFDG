@@ -21,8 +21,8 @@ class Player:
         self.actions = {
             'rotate': False,
             'place base': False,
-            'oafs reenforce': False,
-            'wizards reenforce': False,
+            'oaf reenforce': False,
+            'wizard reenforce': False,
             'place wall': False,
             'remove wall': False,
             'trade tiles': False
@@ -268,7 +268,7 @@ class Player:
         assert len(wizards_to_move) == n_wizards
 
         
-        removed = self.game[to_loc].conquered()
+        removed = self.game[to_loc].conquered(self)
         if removed and self.game[to_loc].owned_by != self.name:
             att_flag = True
             while removed:
@@ -319,7 +319,7 @@ class Player:
         force = sum(n_oafs) + sum(n_wizards)
 
         if self.can_invade(to_loc, attacking_with = force):
-            removed = self.game[to_loc].conquered()
+            removed = self.game[to_loc].conquered(self)
             for i, l in enumerate(from_locs):
                 self.move(n_oafs = n_oafs[i], n_wizards = n_wizards[i],
                           from_loc = l, to_loc = to_loc)
@@ -464,7 +464,7 @@ class Player:
                              ' Doing nothing')
                 return False
 
-            for loc, n in zip(locations, number):
+            for loc, n in zip(location, number):
                 self.add_unit('oaf', loc, n)
 
         elif isinstance(location, tuple) and \
@@ -481,7 +481,7 @@ class Player:
         a base.
         """
 
-        if self.actions['wizards reenforce']:
+        if self.actions['wizard reenforce']:
             warnings.warn('Cannot take same action twice in a row.' +\
                           ' Doing nothing.')
             return False
@@ -508,8 +508,8 @@ class Player:
              isinstance(number, int):
             self.add_unit('wizard', location, number)
 
-        self.actions['wizards reenforce'] = True
-        self.last_action = 'wizards reenforce'
+        self.actions['wizard reenforce'] = True
+        self.last_action = 'wizard reenforce'
 
     def trade_tiles(self, location1, location2):
         """
