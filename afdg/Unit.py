@@ -211,7 +211,7 @@ class Oaf(Unit):
 
         if self.player.n_bases > 0:
             new_loc = tuple([int(s) for s in raw_input(
-                    'New location\n'
+                    '{}: New location\n'.format(self.player)
                 ).lstrip('(').rstrip(')').split(',')])
             self.player.add_unit('oaf', new_loc)
 

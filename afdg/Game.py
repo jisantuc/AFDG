@@ -166,7 +166,7 @@ class Game(object):
         new_order = sorted(turn_data, key = lambda x: (x[1],x[2]))
 
         self.player_order = [n[0] for n in new_order]
-        if turn == 8:
+        if self.turn == 8:
             self.declare_winner(turn_data)
         else:
             self.turn += 1

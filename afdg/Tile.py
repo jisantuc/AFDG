@@ -146,6 +146,14 @@ class Tile:
 
         self.owned_by = player_name if player_name is not None else None
 
+    def update_owner(self):
+        """
+        Checks for owner of first unit on self and sets owner to that
+        player.
+        """
+
+        self.set_owner(self.units[0].player.name if self.units else None)
+
     def make_base(self,player):
         """
         Makes self a base location for player.
@@ -229,18 +237,24 @@ class Tile:
         """
 
         player = self.units[0].player if self.units else None
-        if player:
+        to_return = []
+
+        if player and player != self.owned_by:
             for u in self.units:
-                player.units.remove(u)
+                
+                if isinstance(u, Unit.Oaf):
+                    to_return.append(u)
 
                 if self.is_base:
                     player.n_bases -= 1
 
                 if player.n_bases == 0:
                     return []
+
+        elif player == self.owned_by:
+            to_return.extend(self.units)
             
-        return [self.remove_unit(u) for u in self.units \
-                if isinstance(u, Unit.Oaf)]
+        return to_return
 
     def cleanup(self):
         """

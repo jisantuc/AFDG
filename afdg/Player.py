@@ -268,15 +268,17 @@ class Player:
 
         
         removed = self.game[to_loc].conquered()
-        if removed:
+        if removed and self.game[to_loc].owned_by != self.name:
             att_flag = True
             while removed:
                 u = removed[0]
                 new_loc = tuple([int(s) for s in raw_input(
-                    'New location\n'
+                    '{}: New location\n'.format(u.player)
                 ).lstrip('(').rstrip(')').split(',')])
                 if u.player.add_unit('oaf',new_loc) is None:
                     removed.remove(u)
+        elif removed and self.game[to_loc].owned_by == self.name:
+            att_flag = False
         else:
             att_flag = False
 
@@ -284,6 +286,14 @@ class Player:
             u.move(to_loc)
             if att_flag and isinstance(u, Unit.Wizard):
                 u.attacked = True
+        if att_flag:
+            self.game[to_loc].set_units(oafs_to_move + wizards_to_move)
+        else:
+            self.game[to_loc].set_units(
+                oafs_to_move + wizards_to_move + removed
+            )
+        self.game[to_loc].update_owner()
+        self.game[from_loc].update_owner()
 
     def move_from_several(self, n_oafs, n_wizards, from_locs, to_loc):
         """
@@ -318,6 +328,9 @@ class Player:
                         ).split(',')]
                     if u.player.add_unit('oaf',new_loc) is None:
                         removed.remove(u)
+        for l in from_locs:
+            self.game[l].update_owner()
+        self.game[to_loc].update_owner()
 
     def attack_with_wizards(self, n_wizards, w_locs, location, targets):
         """
@@ -400,11 +413,15 @@ class Player:
             self.actions['place base'] = True
             self.last_action = 'place base'
 
-    def rotate(self, location, angle):
+    def rotate(self, location, angle, action = False):
         """
         Rotates tile at location by angle.
         """
-        
+
+        #check that if not an action, only 90 degree rotation is specified
+        assert not (not action and (angle % 360 != 90 and
+                                    angle % 360 != 270))
+
         if self.actions['rotate']:
             warnings.warn('Cannot take same action twice in a row.' +\
                           ' Doing nothing.')
@@ -412,8 +429,9 @@ class Player:
 
         self.game[location].rotate(angle)
 
-        self.actions['rotate'] = True
-        self.last_action = 'rotate'
+        if action:
+            self.actions['rotate'] = True
+            self.last_action = 'rotate'
 
     def oaf_reenforce(self, location, number):
         """

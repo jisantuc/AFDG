@@ -18,7 +18,8 @@ g.find_player('Player2').add_unit('oaf', (3,3), 4)
 g.find_player('Player2').add_unit('wizard', (0,0), 2)
 g.find_player('Player2').add_unit('wizard', (3,3), 2)
 
-#TURN 1
+#TURN 1 MAR only
+#Player 1 moves all killed units to (2,2) for this turn
 
 #move some units
 g.find_player('Player1').move(n_oafs = 2,
@@ -29,16 +30,57 @@ g.find_player('Player1').move(n_oafs = 2,
                               n_wizards = 2,
                               from_loc = (1,1),
                               to_loc = (1,2))
+g.find_player('Player1').rotate((1,1), -90)
 
 g.find_player('Player2').move(n_oafs = 3,
                               n_wizards = 2,
                               from_loc = (3,3),
                               to_loc = (2,3))
-#should prompt twice for new locations for dead oafs
-assert len(g[2,2].units) == 4
 
+assert len(g[2,2].units) == 4
 
 g.find_player('Player2').move(n_oafs = 1,
                               n_wizards = 2,
                               from_loc = (0,0),
-                              to_loc = (0,1))
+                              to_loc = (1,0))
+g.find_player('Player2').attack_with_wizards(
+    n_wizards = [2],
+    w_locs = [(1,0)],
+    location = (1,1),
+    targets = ['oaf'] * 2
+)
+
+g.cleanup()
+
+print g.player_order
+
+#check that things have gone ok
+assert g.find_player('Player2') == g.player_order[-1]
+assert len(g[2,2].units) == 6
+
+#TURN 2 ACTIONS
+
+g.find_player('Player2').trade_tiles((0,1), (1,1))
+g.find_player('Player1').place_wall((0,1), 'north')
+
+assert g.find_player('Player1').last_action == 'place wall'
+assert g.find_player('Player2').last_action == 'trade tiles'
+
+#TURN 2 MAR
+
+g.find_player('Player1').move(1,2,(1,2),(1,1))
+g.find_player('Player1').attack_with_wizards(
+    n_wizards = [2],
+    w_locs = [(1,1)],
+    location = (1,0),
+    targets = ['wizard','wizard']
+)
+g.find_player('Player1').move(6,0,(2,2),(2,3))
+assert len(g[2,3].units) == 6
+#player 2 relocates one oaf to (3,3), two to (0,0)
+
+g.find_player('Player1').rotate((3,0), 270)
+
+g.find_player('Player2').move(5,0,(0,0),(1,0))
+g.find_player('Player2').rotate((0,1),90)
+assert g[0,1].walls['west']
