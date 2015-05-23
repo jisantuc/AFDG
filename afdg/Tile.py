@@ -240,16 +240,16 @@ class Tile:
         to_return = []
 
         if player and player != self.owned_by:
-            for u in self.units:
-                
-                if isinstance(u, Unit.Oaf):
-                    to_return.append(u)
+            
+            to_return.extend([u for u in self.units if isinstance(
+                u, Unit.Oaf
+            )])
 
-                if self.is_base:
-                    player.n_bases -= 1
+            if self.is_base:
+                player.n_bases -= 1
 
-                if player.n_bases == 0:
-                    return []
+            if player.n_bases == 0:
+                return []
 
         elif player == self.owned_by:
             to_return.extend(self.units)

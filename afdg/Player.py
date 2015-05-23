@@ -214,8 +214,9 @@ class Player:
                 self.add_unit(u_type, base_loc)
             return
 
-        if not self.game[base_loc].is_base:
-            warnings.warn('Units can only be added on bases.' +\
+        if not self.game[base_loc].is_base or \
+           self.game[base_loc].owned_by != self.name:
+            warnings.warn('Units can only be added on own bases.' +\
                           ' Doing nothing.')
             return False
         
@@ -277,6 +278,7 @@ class Player:
                 ).lstrip('(').rstrip(')').split(',')])
                 if u.player.add_unit('oaf',new_loc) is None:
                     removed.remove(u)
+        
         elif removed and self.game[to_loc].owned_by == self.name:
             att_flag = False
         else:
@@ -286,12 +288,14 @@ class Player:
             u.move(to_loc)
             if att_flag and isinstance(u, Unit.Wizard):
                 u.attacked = True
+        
         if att_flag:
             self.game[to_loc].set_units(oafs_to_move + wizards_to_move)
         else:
             self.game[to_loc].set_units(
                 oafs_to_move + wizards_to_move + removed
             )
+        
         self.game[to_loc].update_owner()
         self.game[from_loc].update_owner()
 
