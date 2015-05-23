@@ -100,6 +100,7 @@ assert g.player_order[-1] == g.find_player('Player1')
 
 g.find_player('Player1').place_base((3,0))
 assert g[0,0].is_base and g[0,0].owned_by == 'Player2'
+print 'Player1 reenforces to (3,0)'
 g.find_player('Player2').oaf_reenforce([(0,0),(3,3)], [2,1])
 assert len(g[0,0].units) == 2
 assert len(g[3,3].units) == 3
@@ -123,3 +124,141 @@ assert not g[3,3].is_base and g[3,3].owned_by == 'Player1'
 
 g.cleanup()
 assert g.player_order[-1] == g.find_player('Player2')
+
+#TURN 4 ACTIONS
+
+g.find_player('Player2').remove_wall((0,1), 'south')
+g.find_player('Player1').wizard_reenforce(
+    [(3,0),(2,2)],
+    [1,1]
+)
+
+#TURN 4 MAR
+
+print 'Player2 can only relocate to (0,0)'
+
+g.find_player('Player1').attack_with_wizards(
+    [1],
+    [(2,2)],
+    (3,2),
+    ['oaf']
+)
+g.find_player('Player1').move(2,0,(3,3),(3,2))
+g.find_player('Player1').move(1,1,(3,0),(3,1))
+g.find_player('Player1').move(1,0,(1,2),(0,2))
+g.find_player('Player1').move(3,0,(2,2),(2,1))
+g.find_player('Player1').rotate((2,2), 90)
+
+print 'Player1 relocates to (2,2)'
+g.find_player('Player2').move(4,0,(1,1),(2,1))
+
+g.find_player('Player2').rotate((3,3), 90)
+
+g.cleanup()
+print g.player_order
+assert g.player_order[-1] == g.find_player('Player1')
+
+# TURN 5 ACTIONS
+g.find_player('Player1').place_wall((2,2), 'north')
+g.find_player('Player2').place_wall((3,1), 'west')
+
+# TURN 5 MAR
+
+g.find_player('Player2').move(1,0,(0,1),(1,1))
+g.find_player('Player2').move(2,0,(2,1),(2,0))
+g.find_player('Player2').rotate((3,3), 270)
+
+g.find_player('Player1').move(1,0,(0,2),(0,1))
+g.find_player('Player1').attack_with_wizards(
+    [1,1],
+    [(2,2),(3,1)],
+    (2,1),
+    ['oaf']
+)
+g.find_player('Player1').move(2,1,(2,2),(1,2))
+assert len(g[1,2].units) == 3 and\
+       g.find_player('Player1').n_wizards_on((1,2)) == 1
+g.find_player('Player1').rotate((3,1), 90)
+
+g.cleanup()
+
+# TURN 6 ACTIONS
+g.find_player('Player1').oaf_reenforce((3,0),3)
+g.find_player('Player2').trade_tiles((2,0),(3,0))
+assert g[2,0].is_base and \
+       len(g[2,0].units) == 3 \
+       and g[2,0].owned_by == 'Player1' \
+       and g[3,0].owned_by == 'Player2'
+
+# TURN 6 MAR
+
+print 'First attack from several.'
+g.find_player('Player2').move_from_several(
+    [2,2,1],
+    [0,0,0],
+    [(1,0),(3,0),(2,1)],
+    (2,0)
+)
+
+#lot of assertions because this method is scary
+assert len(g[2,0].units) == 5
+assert g[2,0].is_base == False and g[2,0].owned_by == 'Player2'
+assert len(g[1,0].units) == 0
+assert len(g[3,0].units) == 0
+assert len(g[2,1].units) == 0
+assert len(g[2,2].units) == 4
+
+print 'Second move from several.'
+g.find_player('Player2').move_from_several(
+    n_oafs = [1,1],
+    n_wizards = [0,0],
+    from_locs = [(0,0),(1,1)],
+    to_loc = (0,1)
+)
+assert len(g[0,0].units) == 4
+assert len(g[1,1].units) == 0
+assert len(g[0,1].units) == 2
+assert len(g[2,2].units) == 5
+assert g[0,1].owned_by == 'Player2'
+
+g.find_player('Player2').rotate((2,2),90)
+
+g.find_player('Player1').move(1,1,(1,2),(0,2))
+g.find_player('Player1').attack_with_wizards(
+    [1],
+    [(0,2)],
+    (0,1),
+    ['oaf']
+)
+g.find_player('Player1').move(4,0,(2,2),(2,1))
+g.find_player('Player1').move(0,1,(3,1),(2,1))
+g.find_player('Player1').attack_with_wizards(
+    [1],
+    [(2,1)],
+    (2,0),
+    ['oaf']
+)
+g.find_player('Player1').move(1,0,(3,2),(3,3))
+
+g.cleanup()
+
+assert g.find_player('Player1').n_tiles == 8
+assert g.find_player('Player2').n_tiles == 3
+
+assert len(g[0,0].units) == 6 and\
+       len(g[2,0].units) == 4 and\
+       len(g[0,1].units) == 1 and\
+       len(g[2,1].units) == 5 and\
+       len(g[3,1].units) == 1 and\
+       g[3,1].walls['south'] and\
+       len(g[0,2].units) == 2 and\
+       len(g[1,2].units) == 1 and\
+       len(g[2,2].units) == 1 and\
+       g[2,2].walls['west'] and\
+       len(g[3,2].units) == 1 and\
+       len(g[2,3].units) == 1 and\
+       len(g[3,3].units) == 1
+
+# TURN 7 ACTIONS
+
+#this will be the turn when rotate action is moved, checking that off

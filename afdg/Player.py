@@ -47,6 +47,13 @@ class Player:
         return len([t for t in self.game.tiles if t.occupied() and \
                     t.occupied()[0] == self])
 
+    def count_units(self):
+        """
+        Counts units controlled by self.
+        """
+
+        return len(self.units)
+
     def units_near(self, location):
         """
         Finds units near location that are adjacent to location.
@@ -305,6 +312,10 @@ class Player:
         possible. Adds up available units from each and checks to
         make sure invasion is possible with can_invade's
         attacking_with parameter.
+
+        DO NOT use this method to move several units onto a space that
+        is already controlled by the moving player. It is not currently
+        set up to do this. This is issue #8.
         """
 
         try:
@@ -320,18 +331,22 @@ class Player:
 
         if self.can_invade(to_loc, attacking_with = force):
             removed = self.game[to_loc].conquered(self)
-            for i, l in enumerate(from_locs):
-                self.move(n_oafs = n_oafs[i], n_wizards = n_wizards[i],
-                          from_loc = l, to_loc = to_loc)
-
             if removed:
                 while removed:
                     u = removed[0]
-                    new_loc = [int(s) for s in raw_input(
-                        'New location\n'
-                        ).split(',')]
+                    new_loc = tuple([int(s) for s in raw_input(
+                    '{}: New location\n'.format(u.player)
+                    ).lstrip('(').rstrip(')').split(',')])
                     if u.player.add_unit('oaf',new_loc) is None:
                         removed.remove(u)
+                        self.game[to_loc].units.remove(u)
+            
+            for i, l in enumerate(from_locs):
+                self.move(n_oafs = n_oafs[i], n_wizards = n_wizards[i],
+                          from_loc = l, to_loc = to_loc)
+        for u in self.game[to_loc].units:
+            u.attacked = True
+
         for l in from_locs:
             self.game[l].update_owner()
         self.game[to_loc].update_owner()
@@ -426,7 +441,7 @@ class Player:
         assert not (not action and (angle % 360 != 90 and
                                     angle % 360 != 270))
 
-        if self.actions['rotate']:
+        if self.actions['rotate'] and action:
             warnings.warn('Cannot take same action twice in a row.' +\
                           ' Doing nothing.')
             return False
@@ -474,11 +489,10 @@ class Player:
         self.actions['oaf reenforce'] = True
         self.last_action = 'oaf reenforce'
 
-    def wizard_reenforce(self, location, split = False):
+    def wizard_reenforce(self, location, number):
         """
-        Reenforces wizards. Takes locations and numbers as length
-        3 lists. Locations must be locations where the player has
-        a base.
+        Reenforces wizards. Takes location as list or tuple and numbers
+        as list or tuple. Location and number must be same type.
         """
 
         if self.actions['wizard reenforce']:
@@ -492,7 +506,7 @@ class Player:
             warnings.warn('Illegal attempt to add units.' +\
                           ' Doing nothing.')
             return False
-        
+
         if isinstance(location, list) and \
            isinstance(number, list):
             
@@ -501,7 +515,7 @@ class Player:
                              ' Doing nothing')
                 return False
 
-            for loc, n in zip(locations, number):
+            for loc, n in zip(location, number):
                 self.add_unit('wizard', loc, n)
 
         elif isinstance(location, tuple) and \
@@ -596,7 +610,8 @@ class Player:
         for k in self.actions.keys():
             self.actions[k] = True if k == self.last_action else False
 
-        self.n_units = len(self.units)
+        self.n_tiles = self.count_tiles()
+        self.n_units = self.count_units()
         for u in self.units:
             u.attacked = False
             u.moved = False

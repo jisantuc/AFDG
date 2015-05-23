@@ -160,7 +160,7 @@ class Game(object):
         for p in self.players:
             p.cleanup()
 
-        turn_data = [(p, p.count_tiles(), p.n_units) \
+        turn_data = [(p, p.n_tiles, p.n_units) \
                      for p in self.player_order]
 
         new_order = sorted(turn_data, key = lambda x: (x[1],x[2]))
