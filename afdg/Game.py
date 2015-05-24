@@ -167,6 +167,6 @@ class Game(object):
 
         self.player_order = [n[0] for n in new_order]
         if self.turn == 8:
-            self.declare_winner(turn_data)
+            print 'Winner is {}'.format(self.declare_winner(turn_data))
         else:
             self.turn += 1

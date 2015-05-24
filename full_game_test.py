@@ -223,6 +223,7 @@ assert g[0,1].owned_by == 'Player2'
 
 g.find_player('Player2').rotate((2,2),90)
 
+print 'Player2 continues to reenforce to (0,0).'
 g.find_player('Player1').move(1,1,(1,2),(0,2))
 g.find_player('Player1').attack_with_wizards(
     [1],
@@ -257,8 +258,49 @@ assert len(g[0,0].units) == 6 and\
        g[2,2].walls['west'] and\
        len(g[3,2].units) == 1 and\
        len(g[2,3].units) == 1 and\
-       len(g[3,3].units) == 1
+       len(g[3,3].units) == 1 and\
+       g.player_order[-1] == g.find_player('Player1')
 
 # TURN 7 ACTIONS
 
-#this will be the turn when rotate action is moved, checking that off
+g.find_player('Player1').rotate((3,1), -90, action = True)
+g.find_player('Player2').place_wall((1,1), 'south')
+
+# TURN 7 MAR
+
+g.find_player('Player2').move(4,0,(2,0),(3,0))
+g.find_player('Player2').move(5,0,(0,0),(1,0))
+g.find_player('Player2').move(1,0,(0,0),(0,1))
+g.find_player('Player2').rotate((2,2), -90)
+
+g.find_player('Player1').move(4,1,(2,1),(1,1))
+g.find_player('Player1').attack_with_wizards(
+    [1,1],
+    [(1,1), (0,2)],
+    (0,1),
+    ['oaf'] * 2
+)
+g.find_player('Player1').rotate((3,1), -90)
+
+g.cleanup()
+
+# TURN 8 Actions
+assert g.player_order[-1] == g.find_player('Player1')
+
+g.find_player('Player2').trade_tiles((1,0), (1,1))
+g.find_player('Player1').trade_tiles((1,0), (1,1))
+
+# TURN 8 MAR
+
+g.find_player('Player2').move(2,0,(0,0),(0,1))
+g.find_player('Player2').move(2,0,(3,0),(2,0))
+g.find_player('Player2').rotate((1,1), -90)
+
+g.find_player('Player1').move(1,0,(1,1),(2,1))
+g.find_player('Player1').move(1,0,(0,2),(0,3))
+g.find_player('Player1').move(1,0,(1,1),(1,2))
+g.find_player('Player1').move(1,0,(1,2),(1,3))
+g.find_player('Player1').rotate((1,1), -90)
+
+g.cleanup()
+

@@ -256,7 +256,7 @@ class Tile:
 
         elif player == check:
             to_return.extend(self.units)
-            
+
         return to_return
 
     def cleanup(self):

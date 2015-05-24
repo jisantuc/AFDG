@@ -47,6 +47,18 @@ class Player:
         return len([t for t in self.game.tiles if t.occupied() and \
                     t.occupied()[0] == self])
 
+    def collect_units(self):
+        """
+        Called as part of cleanup. Gets units from each tile and sets
+        self.units to that list.
+        """
+
+        us = []
+        for t in self.game.tiles:
+            if t.owned_by == self.name:
+                us.extend(t.units)
+        self.units = us
+
     def count_units(self):
         """
         Counts units controlled by self.
@@ -610,8 +622,9 @@ class Player:
         for k in self.actions.keys():
             self.actions[k] = True if k == self.last_action else False
 
-        self.n_tiles = self.count_tiles()
+        self.collect_units()
         self.n_units = self.count_units()
+        self.n_tiles = self.count_tiles()
         for u in self.units:
             u.attacked = False
             u.moved = False
