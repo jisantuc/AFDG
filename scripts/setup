@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# bring up the database and create the database and
+# user
+docker-compose up -d db
+until psql -h "localhost" -U "postgres" -c '\l'; do
+    >&2 echo "Postgres is unavailable - sleeping"
+    sleep 2
+done
+psql -U postgres -h localhost -f dbsetup.sql
+
+# run migrations
+docker-compose run web ./manage.py migrate

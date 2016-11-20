@@ -1,0 +1,15 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8080
+    volumes:
+      - .:/afdg-core
+    ports:
+      - "8080:8080"
+    links:
+      - db
