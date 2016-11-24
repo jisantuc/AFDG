@@ -1,0 +1,14 @@
+#!/bin/bash
+
+usage() {
+    echo "Invoke django manager commands in the web container"
+    echo "Usage: $0 command [arguments]"
+    exit 1
+}
+
+if [ -z $1 ]
+then
+    usage
+else
+    docker-compose run --rm web ./manage.py $@
+fi
