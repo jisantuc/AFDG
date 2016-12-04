@@ -1,0 +1,3 @@
+docker-compose up -d db
+
+docker-compose run --rm db psql -U $DBUSER -d afdg -h db

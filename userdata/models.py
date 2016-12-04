@@ -1,11 +1,10 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.auth.models import User
 
-import uuid
 
-
-class AFDGUser(models.Model):
+class UserWinTracker(models.Model):
     """AFDG User model class tracking wins and total games
 
     There's no secret or password or anything like that because there's
@@ -14,7 +13,6 @@ class AFDGUser(models.Model):
     believes them.
     """
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(max_length=31, null=False, unique=True)
+    user = models.ForeignKey(User, null=False)
     wins = models.IntegerField(default=0, null=False)
     games = models.IntegerField(default=0, null=False)
