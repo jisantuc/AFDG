@@ -1,9 +1,17 @@
 from rest_framework import serializers
 
-from userdata.models import AFDGUser
+from django.contrib.auth.models import User
+
+from userdata.models import UserWinTracker
 
 
-class AFDGUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AFDGUser
+        model = User
+        fields = ('username', 'is_staff', 'is_superuser')
+
+
+class UserWinTrackerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserWinTracker
         fields = '__all__'
