@@ -26,6 +26,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # rest_framework apps
+    'rest_framework.authtoken',
+
+    # improved django shell
+    'django_extensions',
+
     # custom apps
     'userdata',
     'game'
@@ -66,7 +72,7 @@ WSGI_APPLICATION = 'afdg_core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'afdg',
         'USER': 'afdg',
         'HOST': 'db',
@@ -116,8 +122,8 @@ STATIC_URL = '/static/'
 # add basic authentication from DRF
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
