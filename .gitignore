@@ -3,3 +3,8 @@
 \#*\#
 
 dbsetup.sql
+
+# literally elm-stuff
+elm-stuff**
+repl-temp-*
+index.html

@@ -1,11 +1,15 @@
-version: '2'
+version: '3.4'
+
 services:
+
   db:
     image: postgres
     ports:
       - "5432:5432"
+
   web:
-    build: .
+    build: ./afdg-core
+    context: ./afdg-core
     command: python manage.py runserver 0.0.0.0:8080
     volumes:
       - .:/afdg-core
@@ -13,3 +17,11 @@ services:
       - "8080:8080"
     links:
       - db
+
+  frontend:
+    build: ./afdg-frontend
+    context: ./afdg-frontend
+    volumes:
+      - .:/app
+    ports:
+      - "9091:9091"
