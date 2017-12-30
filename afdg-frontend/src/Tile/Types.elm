@@ -32,5 +32,6 @@ type Border
 type alias Tile =
     { coord : Coord
     , fillColor : Color
+    , focused : Bool
     , walls : List Border
     }

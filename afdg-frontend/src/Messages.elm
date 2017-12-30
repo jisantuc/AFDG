@@ -11,12 +11,11 @@ application state
 -}
 
 
+import Types exposing (Mode)
 import Tile.Types as TileTypes
 
 
 type Msg
     = HighlightNeighbors
-    | Focus
-    | UnFocus
-    | TileMouseIn TileTypes.Tile
-    | TileMouseOut TileTypes.Tile
+    | TileSelect TileTypes.Tile
+    | NewMode Mode

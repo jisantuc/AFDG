@@ -10,17 +10,12 @@ module Tile.State exposing (..)
 
 # Helpers
 
-@doc borders, neighbors, view
+@doc borders, neighbors, reachable, view
 
 -}
 
-import Messages exposing (Msg(..))
+import Types exposing (Mode(..))
 import Tile.Types exposing (..)
-
-
-model : Tile
-model =
-    Tile (Coord 1 0) "red" [ West ]
 
 
 {-| Check whether two tiles border each other
@@ -40,37 +35,70 @@ borders tile other =
         xDist <= 1 && yDist <= 1 && totalDist == 1
 
 
-{-| Find all tiles that border a tile
+{-| Color a reference tile red and tiles that meet some condition blue
 -}
-neighbors : Tile -> List Tile -> List Tile
-neighbors tile =
-    List.filter (borders tile)
+highlightTiles : (Tile -> Tile -> Bool) -> Tile -> List Tile -> List Tile
+highlightTiles cond tile tiles =
+    List.map
+        (\x ->
+            { x
+                | fillColor =
+                    if (cond x tile) then
+                        "blue"
+                    else if x == tile then
+                        "red"
+                    else
+                        "none"
+            }
+        )
+        tiles
+
+
+{-| Check whether a tile is reachable from another tile (no walls)
+-}
+reachable : Tile -> Tile -> Bool
+reachable tile other =
+    case (borders tile other) of
+        False ->
+            False
+
+        True ->
+            let
+                xDiff =
+                    tile.coord.x - other.coord.x
+
+                yDiff =
+                    tile.coord.y - other.coord.y
+            in
+                case ( xDiff, yDiff ) of
+                    ( 1, _ ) ->
+                        not <| List.member West tile.walls || List.member East other.walls
+
+                    ( -1, _ ) ->
+                        not <| List.member East tile.walls || List.member West other.walls
+
+                    ( _, 1 ) ->
+                        not <| List.member South tile.walls || List.member North other.walls
+
+                    ( _, -1 ) ->
+                        not <| List.member North tile.walls || List.member South other.walls
+
+                    _ ->
+                        False
 
 
 
 -- UPDATE
 
 
-update : Msg -> Tile -> List Tile -> List Tile
-update msg tile tiles =
-    case msg of
-        Focus ->
-            List.map
-                (\x ->
-                    { x
-                        | fillColor =
-                            if (borders x tile) then
-                                "blue"
-                            else
-                                "red"
-                    }
-                )
-                tiles
+update : Mode -> Tile -> List Tile -> List Tile
+update mode tile tiles =
+    case mode of
+        Inactive ->
+            List.map (\x -> { x | fillColor = "none" }) tiles
 
-        UnFocus ->
-            List.map
-                (\x -> { x | fillColor = "red" })
-                tiles
+        Neighbors ->
+            highlightTiles borders tile tiles
 
-        _ ->
-            tiles
+        Reachable ->
+            highlightTiles reachable tile tiles

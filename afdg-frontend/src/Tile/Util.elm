@@ -15,4 +15,9 @@ someTiles =
         coords =
             List.map2 Coord xs ys
     in
-        List.map (\c -> Tile c "red" []) coords
+        List.map (\c -> Tile c "none" False []) coords
+
+
+nullTile : Tile
+nullTile =
+    Tile {x = -9, y = -9 } "none" False []

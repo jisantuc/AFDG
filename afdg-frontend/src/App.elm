@@ -3,9 +3,10 @@ module App exposing (main)
 import Html exposing (Html)
 import Messages exposing (..)
 import State exposing (initialModel)
-import Types exposing (Model)
+import Types exposing (Model, Mode(Inactive))
 import View exposing (root)
 import Tile.State as T
+import Tile.Util exposing (nullTile)
 
 
 main : Program Never Model Msg
@@ -19,24 +20,25 @@ main =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg state =
     case msg of
-        TileMouseIn tile ->
+        NewMode m ->
             let
                 updatedTiles =
-                    T.update Focus tile model.tiles
+                    if m == Inactive then (T.update m nullTile (state.tiles))
+                        else state.tiles
             in
-                ( { model | tiles = updatedTiles }, Cmd.none )
+                ( { state | activeMode = m, tiles = updatedTiles }, Cmd.none )
 
-        TileMouseOut tile ->
+        TileSelect tile ->
             let
                 updatedTiles =
-                    T.update UnFocus tile model.tiles
+                    T.update state.activeMode tile state.tiles
             in
-                ( { model | tiles = updatedTiles }, Cmd.none )
+                ( { state | tiles = updatedTiles }, Cmd.none )
 
         _ ->
-            ( model, Cmd.none )
+            ( state, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

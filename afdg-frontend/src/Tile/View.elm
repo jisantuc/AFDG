@@ -5,7 +5,7 @@ module Tile.View exposing (..)
 
 import Html exposing (Html, div)
 import Html.Attributes as HA
-import Html.Events exposing (onMouseEnter, onMouseLeave)
+import Html.Events exposing (onClick)
 import Svg exposing (Svg, line, rect, svg)
 import Svg.Attributes
     exposing
@@ -17,8 +17,8 @@ import Svg.Attributes
         , y2
         , rx
         , ry
-        , strokeWidth
         , stroke
+        , strokeWidth
         , height
         , width
         , fill
@@ -72,15 +72,12 @@ view tile =
         [ HA.style
             [ ( "display", "flex" )
             , ( "padding", "8px" )
-            , ( "width", "calc(100% * (1/4) - 10px - 1px);" )
+            , ( "flex-basis", "23%" )
             ]
         ]
         [ svg
             [ viewBox "0 0 400 400"
-            , width "400"
-            , height "400"
-            , onMouseEnter (TileMouseIn tile)
-            , onMouseLeave (TileMouseOut tile)
+            , onClick (TileSelect tile)
             ]
           <|
             [ rect
@@ -91,6 +88,8 @@ view tile =
                 , width "100%"
                 , height "100%"
                 , fill tile.fillColor
+                , stroke "red"
+                , strokeWidth "6"
                 ]
                 []
             ]
