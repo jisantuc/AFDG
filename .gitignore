@@ -7,4 +7,6 @@ dbsetup.sql
 # literally elm-stuff
 elm-stuff**
 repl-temp-*
+elm.js
+main.js
 index.html

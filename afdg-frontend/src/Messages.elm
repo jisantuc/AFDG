@@ -11,5 +11,12 @@ application state
 -}
 
 
+import Tile.Types as TileTypes
+
+
 type Msg
-    = Reset
+    = HighlightNeighbors
+    | Focus
+    | UnFocus
+    | TileMouseIn TileTypes.Tile
+    | TileMouseOut TileTypes.Tile
