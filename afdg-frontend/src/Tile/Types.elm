@@ -3,6 +3,8 @@ module Tile.Types exposing (..)
 {-| Types to support the Tile module
 -}
 
+import Base.Types exposing (Base)
+
 
 {-| Alias for colors
 -}
@@ -34,4 +36,5 @@ type alias Tile =
     , fillColor : Color
     , focused : Bool
     , walls : List Border
+    , base : Maybe Base
     }

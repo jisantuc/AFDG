@@ -10,7 +10,6 @@ application state
 
 -}
 
-
 import Types exposing (Mode)
 import Tile.Types as TileTypes
 

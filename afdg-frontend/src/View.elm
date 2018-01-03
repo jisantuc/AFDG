@@ -11,15 +11,16 @@ import Tile.View as TileView
 mkButton : String -> Maybe Msg -> Html Msg
 mkButton label msg =
     let
-        s = [HA.style [ ( "flex", "auto" ) ]]
+        s =
+            [ HA.style [ ( "flex", "auto" ) ] ]
     in
+        case msg of
+            Just m ->
+                button (onClick m :: s) [ text label ]
 
-    case msg of
-        Just m ->
-            button (onClick m :: s) [text label]
+            Nothing ->
+                button s [ text label ]
 
-        Nothing ->
-            button s [text label]
 
 root : Model -> Html Msg
 root model =

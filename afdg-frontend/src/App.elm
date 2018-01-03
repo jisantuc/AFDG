@@ -25,8 +25,10 @@ update msg state =
         NewMode m ->
             let
                 updatedTiles =
-                    if m == Inactive then (T.update m nullTile (state.tiles))
-                        else state.tiles
+                    if m == Inactive then
+                        (T.update m nullTile (state.tiles))
+                    else
+                        state.tiles
             in
                 ( { state | activeMode = m, tiles = updatedTiles }, Cmd.none )
 

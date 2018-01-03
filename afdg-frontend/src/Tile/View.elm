@@ -25,6 +25,7 @@ import Svg.Attributes
         , viewBox
         )
 import Messages exposing (..)
+import Base.View
 import Tile.Types exposing (..)
 
 
@@ -64,6 +65,18 @@ lines tile =
     List.map mkLine tile.walls
 
 
+{-| Draw this tile's base, if it has one
+-}
+base : Tile -> List (Svg Msg)
+base tile =
+    case Maybe.map Base.View.view tile.base of
+        Nothing ->
+            []
+
+        Just elem ->
+            [ elem ]
+
+
 {-| Show a tile as an SVG rectangle
 -}
 view : Tile -> Html Msg
@@ -94,4 +107,5 @@ view tile =
                 []
             ]
                 ++ lines tile
+                ++ base tile
         ]
