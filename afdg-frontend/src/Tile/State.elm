@@ -15,6 +15,9 @@ module Tile.State exposing (..)
 -}
 
 import Types exposing (Mode(..))
+import GameUnit.Util exposing (..)
+import GameUnit.Types exposing (GameUnit)
+import Geom.Types exposing (Coord, Color)
 import Tile.Types exposing (..)
 
 
@@ -87,6 +90,25 @@ reachable tile other =
                         False
 
 
+{-| Increase the number of units on this tile by one
+-}
+addUnit : (Coord -> Color -> GameUnit) -> Tile -> List Tile -> List Tile
+addUnit f tile tiles =
+    case tile.base of
+        Nothing ->
+            tiles
+
+        Just b ->
+            List.map
+                (\x ->
+                    if (x == tile) then
+                        { x | units = f tile.coord b.ownedBy.color :: x.units }
+                    else
+                        x
+                )
+                tiles
+
+
 
 -- UPDATE
 
@@ -102,3 +124,9 @@ update mode tile tiles =
 
         Reachable ->
             highlightTiles reachable tile tiles
+
+        AddOafs ->
+            addUnit newOaf tile tiles
+
+        AddWizards ->
+            addUnit newWizard tile tiles

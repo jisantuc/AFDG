@@ -4,20 +4,8 @@ module Tile.Types exposing (..)
 -}
 
 import Base.Types exposing (Base)
-
-
-{-| Alias for colors
--}
-type alias Color =
-    String
-
-
-{-| Alias for point-like coordinates
--}
-type alias Coord =
-    { x : Int
-    , y : Int
-    }
+import GameUnit.Types exposing (..)
+import Geom.Types exposing (Color, Coord)
 
 
 {-| Enum type for directions a wall can be in
@@ -37,4 +25,5 @@ type alias Tile =
     , focused : Bool
     , walls : List Border
     , base : Maybe Base
+    , units : List GameUnit
     }

@@ -39,8 +39,8 @@ update msg state =
             in
                 ( { state | tiles = updatedTiles }, Cmd.none )
 
-        _ ->
-            ( state, Cmd.none )
+        Clear ->
+            ( initialModel, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

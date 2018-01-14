@@ -33,7 +33,10 @@ root model =
         [ div [ HA.style [ ( "display", "flex" ), ( "flex-grow", "1" ) ] ]
             [ mkButton "Neighbors Mode" (NewMode Neighbors |> Just)
             , mkButton "Reachable Mode" (NewMode Reachable |> Just)
+            , mkButton "Add Oafs" (NewMode AddOafs |> Just)
+            , mkButton "Add Wizards" (NewMode AddWizards |> Just)
             , mkButton "Nothing Mode" (NewMode Inactive |> Just)
+            , mkButton "Clear" (Clear |> Just)
             ]
         , div
             [ HA.style

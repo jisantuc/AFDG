@@ -7,6 +7,8 @@ type Mode
     = Neighbors
     | Reachable
     | Inactive
+    | AddOafs
+    | AddWizards
 
 
 type alias Model =

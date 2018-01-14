@@ -15,6 +15,6 @@ import Tile.Types as TileTypes
 
 
 type Msg
-    = HighlightNeighbors
+    = Clear
     | TileSelect TileTypes.Tile
     | NewMode Mode

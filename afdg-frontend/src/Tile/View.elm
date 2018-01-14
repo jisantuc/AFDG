@@ -26,6 +26,8 @@ import Svg.Attributes
         )
 import Messages exposing (..)
 import Base.View
+import GameUnit.View as GU
+import Geom.Types exposing (Coord)
 import Tile.Types exposing (..)
 
 
@@ -76,6 +78,9 @@ base tile =
         Just elem ->
             [ elem ]
 
+units : Tile -> List (Svg Msg)
+units tile =
+    GU.view tile.units
 
 {-| Show a tile as an SVG rectangle
 -}
@@ -108,4 +113,5 @@ view tile =
             ]
                 ++ lines tile
                 ++ base tile
+                ++ units tile
         ]
