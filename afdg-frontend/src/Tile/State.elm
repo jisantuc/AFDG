@@ -17,7 +17,7 @@ module Tile.State exposing (..)
 import Types exposing (Mode(..))
 import GameUnit.Util exposing (..)
 import GameUnit.Types exposing (GameUnit)
-import Geom.Types exposing (Coord, Color)
+import Geom.Types exposing (Coord, Color(..))
 import Tile.Types exposing (..)
 
 
@@ -27,10 +27,10 @@ borders : Tile -> Tile -> Bool
 borders tile other =
     let
         xDist =
-            abs <| tile.coord.x - other.coord.x
+            abs <| tile.location.x - other.location.x
 
         yDist =
-            abs <| tile.coord.y - other.coord.y
+            abs <| tile.location.y - other.location.y
 
         totalDist =
             xDist + yDist
@@ -47,11 +47,11 @@ highlightTiles cond tile tiles =
             { x
                 | fillColor =
                     if (cond x tile) then
-                        "blue"
+                        Color "blue"
                     else if x == tile then
-                        "red"
+                        Color "red"
                     else
-                        "none"
+                        Color "none"
             }
         )
         tiles
@@ -68,10 +68,10 @@ reachable tile other =
         True ->
             let
                 xDiff =
-                    tile.coord.x - other.coord.x
+                    tile.location.x - other.location.x
 
                 yDiff =
-                    tile.coord.y - other.coord.y
+                    tile.location.y - other.location.y
             in
                 case ( xDiff, yDiff ) of
                     ( 1, _ ) ->
@@ -102,7 +102,7 @@ addUnit f tile tiles =
             List.map
                 (\x ->
                     if (x == tile) then
-                        { x | units = f tile.coord b.ownedBy.color :: x.units }
+                        { x | units = f tile.location b.ownedBy.color :: x.units }
                     else
                         x
                 )
@@ -117,7 +117,7 @@ update : Mode -> Tile -> List Tile -> List Tile
 update mode tile tiles =
     case mode of
         Inactive ->
-            List.map (\x -> { x | fillColor = "none" }) tiles
+            List.map (\x -> { x | fillColor = Color "none" }) tiles
 
         Neighbors ->
             highlightTiles borders tile tiles

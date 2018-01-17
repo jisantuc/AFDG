@@ -20,7 +20,7 @@ type Border
 {-| Alias for a record with a location and a (possibly empty) list of walls
 -}
 type alias Tile =
-    { coord : Coord
+    { location : Coord
     , fillColor : Color
     , focused : Bool
     , walls : List Border

@@ -20,7 +20,7 @@ import Svg.Attributes
         )
 import Messages exposing (Msg)
 import GameUnit.Types exposing (..)
-import Geom.Types exposing (Color, Coord)
+import Geom.Types exposing (Color(..), Coord)
 import GameUnit.Util exposing (isOaf, isWizard)
 
 
@@ -39,7 +39,7 @@ textAtPoint s c =
 
 
 mkOafsMarker : Int -> Color -> List (Svg Msg)
-mkOafsMarker n color =
+mkOafsMarker n (Color color) =
     case n of
         0 ->
             []
@@ -62,7 +62,7 @@ mkOafsMarker n color =
 
 
 mkWizardsMarker : Int -> Color -> List (Svg Msg)
-mkWizardsMarker n color =
+mkWizardsMarker n (Color color) =
     case n of
         0 ->
             []
@@ -103,7 +103,7 @@ view units =
         color =
             case List.head units of
                 Nothing ->
-                    "none"
+                    Color "none"
 
                 Just (Oaf obj) ->
                     obj.color

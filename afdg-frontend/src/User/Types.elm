@@ -1,12 +1,10 @@
 module User.Types exposing (..)
 
-
-type alias Color =
-    String
+import Geom.Types exposing (Color)
 
 
 type alias User =
     { name : String
     , id : Int
-    , color : String
+    , color : Color
     }

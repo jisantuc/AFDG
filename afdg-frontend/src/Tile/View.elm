@@ -29,6 +29,7 @@ import Base.View
 import GameUnit.View as GU
 import Geom.Types exposing (Coord)
 import Tile.Types exposing (..)
+import Geom.Util exposing (colorToString)
 
 
 drawLine : Coord -> Coord -> Svg Msg
@@ -78,9 +79,11 @@ base tile =
         Just elem ->
             [ elem ]
 
+
 units : Tile -> List (Svg Msg)
 units tile =
     GU.view tile.units
+
 
 {-| Show a tile as an SVG rectangle
 -}
@@ -105,7 +108,7 @@ view tile =
                 , ry "5%"
                 , width "100%"
                 , height "100%"
-                , fill tile.fillColor
+                , fill <| colorToString tile.fillColor
                 , stroke "red"
                 , strokeWidth "6"
                 ]

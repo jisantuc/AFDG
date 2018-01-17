@@ -1,13 +1,14 @@
 module User.Util exposing (user1, user2)
 
-import User.Types exposing (User, Color)
+import Geom.Types exposing (Color(..))
+import User.Types exposing (User)
 
 
 user1 : User
 user1 =
     { name = "player1"
     , id = 1
-    , color = "red"
+    , color = Color "red"
     }
 
 
@@ -15,5 +16,5 @@ user2 : User
 user2 =
     { name = "player2"
     , id = 1
-    , color = "blue"
+    , color = Color "blue"
     }

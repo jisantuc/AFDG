@@ -14,13 +14,14 @@ import Svg.Attributes
         )
 import Messages exposing (Msg)
 import Base.Types exposing (Base)
+import Geom.Util exposing (colorToString)
 
 
 view : Base -> Svg Msg
 view base =
     let
         color =
-            base.ownedBy.color
+            colorToString base.ownedBy.color
     in
         rect
             [ stroke color

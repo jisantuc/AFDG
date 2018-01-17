@@ -1,7 +1,7 @@
 module Tile.Util exposing (..)
 
 import Base.Util exposing (user1Base, user2Base)
-import Geom.Types exposing (Coord)
+import Geom.Types exposing (Coord, Color(..))
 import Tile.Types exposing (..)
 
 
@@ -28,9 +28,9 @@ someTiles =
         coords =
             List.map2 Coord xs ys
     in
-        List.map2 (\c b -> Tile c "none" False [ North, South ] (Just b) []) coords bases
+        List.map2 (\c b -> Tile c (Color "none") False [ North, South ] (Just b) []) coords bases
 
 
 nullTile : Tile
 nullTile =
-    Tile { x = -9, y = -9 } "none" False [] Nothing []
+    Tile { x = -9, y = -9 } (Color "none") False [] Nothing []

@@ -1,13 +1,13 @@
-module Geom.Types exposing (..)
+module Geom.Types exposing (Color(..), Coord)
 
 {-| Color and geometry types for other modules
 -}
 
 
-{-| Alias for colors
+{-| Type alias (kind of, since it wasn't getting exported for some reason) for colors
 -}
-type alias Color =
-    String
+type Color
+    = Color String
 
 
 {-| Alias for point-like coordinates

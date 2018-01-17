@@ -7,14 +7,20 @@ import Geom.Types exposing (Color, Coord)
 
 
 type GameUnit
-    = Oaf
-        { location : Coord
-        , color : Color
-        , hasMoved : Bool
-        }
-    | Wizard
-        { location : Coord
-        , color : Color
-        , hasMoved : Bool
-        , hasAttacked : Bool
-        }
+    = Oaf OafRecord
+    | Wizard WizardRecord
+
+
+type alias OafRecord =
+    { location : Coord
+    , color : Color
+    , hasMoved : Bool
+    }
+
+
+type alias WizardRecord =
+    { location : Coord
+    , color : Color
+    , hasMoved : Bool
+    , hasAttacked : Bool
+    }
