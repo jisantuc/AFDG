@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -ex
+
+cd afdg-frontend
+
+elm-make --yes src/App.elm --output ../index.html
+
+cd ../

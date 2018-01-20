@@ -1,36 +1,48 @@
-language: node_js # elm is installed from npm (see install below)
-node_js: node     # use "latest" version of Node.js
-
+language: node_js
+node_js: node
 env:
-  - ELM_VERSION=0.18.0 ELM_TEST=0.18.12
-
+- ELM_VERSION=0.18.0 ELM_TEST=0.18.12
 cache:
-  directories: # so subsequent builds run faster
-    - elm-stuff/build-artifacts
-    - elm-stuff/packages
-    - tests/elm-stuff/build-artifacts # elm-test init creates a "tests/" dir
-    - tests/elm-stuff/packages        # cache files that haven't changed
-    - sysconfcpus
-    - $HOME/.npm # https://stackoverflow.com/a/42523517/1148249
-
+  directories:
+  - elm-stuff/build-artifacts
+  - elm-stuff/packages
+  - tests/elm-stuff/build-artifacts
+  - tests/elm-stuff/packages
+  - sysconfcpus
+  - "$HOME/.npm"
 before_install:
-  - | # build time improvement see: https://git.io/vQcqz
-    if [ ! -d sysconfcpus/bin ];
-    then
-      git clone https://github.com/obmarg/libsysconfcpus.git;
-      cd libsysconfcpus;
-      ./configure --prefix=$TRAVIS_BUILD_DIR/sysconfcpus;
-      make && make install;
-      cd ..;
-    fi
-
-install: # install specific versions of elm & elm-test
-  - npm install -g elm@$ELM_VERSION elm-test@$ELM_TEST
-  # the next 3 lines are courtesy of @rtfeldman https://git.io/vbj0j
-  - mv $(npm config get prefix)/bin/elm-make $(npm config get prefix)/bin/elm-make-old
-  - printf "#\041/bin/bash\n\necho \"Running elm-make with sysconfcpus -n 2\"\n\n$TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make-old \"\$@\"" > $(npm config get prefix)/bin/elm-make
-  - chmod +x $(npm config get prefix)/bin/elm-make
-  - travis_retry elm package install --yes # install main project dependencies
-
+- |
+  if [ ! -d sysconfcpus/bin ];
+  then
+    git clone https://github.com/obmarg/libsysconfcpus.git;
+    cd libsysconfcpus;
+    ./configure --prefix=$TRAVIS_BUILD_DIR/sysconfcpus;
+    make && make install;
+    cd ..;
+  fi
+install:
+- npm install -g elm@$ELM_VERSION elm-test@$ELM_TEST
+- mv $(npm config get prefix)/bin/elm-make $(npm config get prefix)/bin/elm-make-old
+- printf "#\041/bin/bash\n\necho \"Running elm-make with sysconfcpus -n 2\"\n\n$TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus
+  -n 2 elm-make-old \"\$@\"" > $(npm config get prefix)/bin/elm-make
+- chmod +x $(npm config get prefix)/bin/elm-make
+- travis_retry elm package install --yes
 script:
-  - ./scripts/test
+- "./scripts/test"
+
+before_deploy:
+  "./scripts/bundle"
+
+deploy:
+  provider:
+    s3
+  bucket:
+    afdg-game
+  region:
+    us-east-1
+  secret_access_key:
+    secure: M+6aCogup8M7Jtl0hkvHkkz0L0nXd5sGiHd4ytGu3q239CCV5/aM273jvO3O7IWU49Rw8K02l1Qyn3iF+QOfLRa4DFewpNb6vYGG1il3k6tsyOcVz6TIkRlfx5DiMlgzu/Gvq9zxCHmeE6TKVB77+9JVmCv361HuJIRf1EvlaeHwf4ANqefSovuMbr2csv/3uSACX9LxHY5BpWPjUnxboVLmCOTPoBnsmMjPiAJS1HATDuhTLewC+t6tSsqnpTEcJQvoet2v1JTC/08dDIsZ26esunASJ+thqcwtvd4Vx4JSC71GlKHt9pfopcTMjy3rKxExnPFZGh/lDIOexJyBsLJliMU+i4kqugyRyCrGfWILcm30ZadDpXnxUGwJSxtwsGZ2PJq/gRbiVh4dosjjpOW60D9cwirJN4whu5rINfav0QEsCvfkH+v4mkGfiV/bKvdQ8UjRWgoeretMWFjT0huPIA5sinL2KYwKGgi2yCh//zOG1b0XSbx9eraM9gjYXlknygz4C0SzYSJuK+awRt9tK76xGCA0b7ouGiSdLoSpprSBnXg3exVhCYPRHBdTChAy5/osVV2KAFJpc5b8+7q8A+BhJMMzTar6LzJwEgl4z7qOmASXacktfW6kGOeH//+krZquyOr4PWaDv2UKIab0UoV/8Pau2ty9RBrJFEs=
+  access_key_id:
+    secure: BIuCz7xCJd7UEQNGwrEZ9DKWwof5p5jQEII+hVuisYZKxog8DWn7qezgSHx5vFRLRY5VIsg6rH2zpH1r+i9v7s/iWUj8wwuTxJBssYpR87TABBGM36zdwGOFpmpD88CE5JH2GHhp00gGeHJE0zif/bMFJ4B4W0HO2+UKoNb0qtDUCIxwUe+gO1tF/B97LaKy1Ky+TjCHURXAF5NVlp09vs6nmi7lBZOCp0mbBheSkcIvvxVOjDbb++9s951WpskvwCuuX8DGLx4r7qwFXXze/hzJu8zOsc9dBxL71NuKmTPn3UC3twU4N8n6KRYX7EzpOggPON67l3TDZp/NjBX0vhIV3Gz2X5IBjSl7CX0m+M1O4e2To+NIwZ/DhUTeVdfbEiGlvHI8gKxBr7wyh3QIC0/ajQS9fccdsoeEbd76t0a4EkrWH0oLEXJLhZ75Fc5nh2rUHy2LVROlq5qY4vsLLhB/jzCY0bmWZ53kJTibSUQg/8iZhwg+6bk7Pi7gkeRprVFMeRueWixnrv4+WjLPhb5s9hdHU05Bvo0pHvXyH++IL5Yi+/3HZ0odLfVbiMa150Hqz9OiP8bQIebkNFUaTaypKueF8hgb6+ft0rl47o0SYTtBauPqdMxW/ClGTEk8429YSHC795VJDmvwfgSEAVgGdN39ODrkun9TklrJq2M=
+  on:
+    develop
