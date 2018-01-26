@@ -1,5 +1,18 @@
 module GameUnit.View exposing (..)
 
+{-| Functions for rendering gameUnits
+
+
+# Renderers
+
+@doc mkOafsMarker, mkWizardsMarker, view
+
+#Helpers
+
+@doc textAtPoint
+
+-}
+
 import Svg exposing (Svg, circle, rect, text, text_)
 import Svg.Attributes
     exposing
@@ -24,6 +37,8 @@ import Geom.Types exposing (Color(..), Coord)
 import GameUnit.Util exposing (isOaf, isWizard)
 
 
+{-| Write a message in a consistent style at a coord
+-}
 textAtPoint : String -> Coord -> Svg Msg
 textAtPoint s c =
     text_
@@ -38,6 +53,8 @@ textAtPoint s c =
         [ text s ]
 
 
+{-| Create a marker showing how many oafs of a certain color
+-}
 mkOafsMarker : Int -> Color -> List (Svg Msg)
 mkOafsMarker n (Color color) =
     case n of
@@ -61,6 +78,8 @@ mkOafsMarker n (Color color) =
                 :: [ textAtPoint (toString n) <| Coord 125 125 ]
 
 
+{-| Create a marker showing how many wizards of a certain color
+-}
 mkWizardsMarker : Int -> Color -> List (Svg Msg)
 mkWizardsMarker n (Color color) =
     case n of

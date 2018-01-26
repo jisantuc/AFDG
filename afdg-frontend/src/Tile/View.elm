@@ -1,6 +1,17 @@
 module Tile.View exposing (..)
 
 {-| Render tiles to html
+
+
+# Renderers
+
+@doc lines, base, units, view
+
+
+# Helpers
+
+@doc mkLine, drawLine
+
 -}
 
 import Html exposing (Html, div)
@@ -32,6 +43,8 @@ import Tile.Types exposing (..)
 import Geom.Util exposing (colorToString)
 
 
+{-| Draw an svg line from coord to coord
+-}
 drawLine : Coord -> Coord -> Svg Msg
 drawLine c1 c2 =
     line
@@ -45,6 +58,8 @@ drawLine c1 c2 =
         []
 
 
+{-| Create an SVG line from a Border
+-}
 mkLine : Border -> Svg Msg
 mkLine bord =
     case bord of
@@ -80,6 +95,8 @@ base tile =
             [ elem ]
 
 
+{-| Convert a tile's units to [Svg Msg]
+-}
 units : Tile -> List (Svg Msg)
 units tile =
     GU.view tile.units

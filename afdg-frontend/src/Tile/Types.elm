@@ -1,6 +1,11 @@
 module Tile.Types exposing (..)
 
 {-| Types to support the Tile module
+
+# Exported Types
+
+@doc Border, Tile
+
 -}
 
 import Base.Types exposing (Base)

@@ -1,6 +1,12 @@
 module Geom.Types exposing (Color(..), Coord)
 
 {-| Color and geometry types for other modules
+
+
+# Exported Types
+
+@doc Color, Coord
+
 -}
 
 

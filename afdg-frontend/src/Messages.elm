@@ -6,7 +6,7 @@ application state
 
 # Exported
 
-@doc Msg, Reset
+@doc Msg, Clear, TileSelect, NewMode
 
 -}
 
@@ -14,6 +14,8 @@ import Types exposing (Mode)
 import Tile.Types as TileTypes
 
 
+{-| Messages that can be sent by user interactions
+-}
 type Msg
     = Clear
     | TileSelect TileTypes.Tile

@@ -1,5 +1,14 @@
 module GameUnit.Util exposing (..)
 
+{-| Utilities for working with game units
+
+
+# Helpers
+
+@doc newOaf, newWizard, isOaf, isWizard
+
+-}
+
 import Geom.Types exposing (..)
 import GameUnit.Types exposing (..)
 

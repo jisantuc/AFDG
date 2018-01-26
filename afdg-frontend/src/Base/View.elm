@@ -1,5 +1,14 @@
 module Base.View exposing (view)
 
+{-| Methods for rendering bases to SVG
+
+
+# Renderers
+
+@doc view
+
+-}
+
 import Svg exposing (Svg, line, rect)
 import Svg.Attributes
     exposing

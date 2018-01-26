@@ -1,5 +1,14 @@
 module App exposing (main)
 
+{-| The main application
+
+
+# Helpers
+
+@doc main
+
+-}
+
 import Html exposing (Html)
 import Messages exposing (..)
 import State exposing (initialModel)

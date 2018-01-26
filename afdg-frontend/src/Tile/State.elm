@@ -1,16 +1,8 @@
 module Tile.State exposing (..)
 
-{-| Types and methods for grid information
+{-| State transformations for grid information
 
-
-# Exported Types
-
-@doc Tile, Coord, Border
-
-
-# Helpers
-
-@doc borders, neighbors, reachable, view
+@doc addUnit, borders, neighbors, reachable, highlightTiles, update
 
 -}
 

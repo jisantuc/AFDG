@@ -1,5 +1,14 @@
 module Tile.Util exposing (..)
 
+{-| Utilities related to tiles
+
+
+# Helpers
+
+@doc someTiles, nullTile
+
+-}
+
 import Base.Util exposing (user1Base, user2Base)
 import Geom.Types exposing (Coord, Color(..))
 import Tile.Types exposing (..)
