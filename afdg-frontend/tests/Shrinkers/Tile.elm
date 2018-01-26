@@ -44,3 +44,6 @@ tile { location, fillColor, focused, walls, base, units } =
         |> andMap (list border <| walls)
         |> andMap (maybe base_ <| base)
         |> andMap (list gameUnit <| units)
+
+listTile : Shrinker (List Tile)
+listTile = list tile

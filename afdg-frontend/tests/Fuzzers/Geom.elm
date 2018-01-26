@@ -12,4 +12,4 @@ colorG =
 
 coordG : Random.Generator Coord
 coordG =
-    Random.map2 Coord (Random.int 0 4) (Random.int 0 4)
+    Random.map2 Coord (Random.int 0 100) (Random.int 0 100)

@@ -1,5 +1,6 @@
 module Fuzzers.Tile exposing (..)
 
+import List.Extra exposing (uniqueBy)
 import Fuzz
     exposing
         ( Fuzzer
@@ -7,8 +8,10 @@ import Fuzz
         )
 import Random.Pcg
     exposing
-        ( map
+        ( filter
+        , map
         , andMap
+        , andThen
         , Generator
         , bool
         , list
@@ -17,7 +20,7 @@ import Random.Pcg
 import Fuzzers.Base exposing (baseG)
 import Fuzzers.Geom exposing (colorG, coordG)
 import Fuzzers.GameUnit exposing (unitsG)
-import Shrinkers.Tile exposing (tile)
+import Shrinkers.Tile exposing (tile, listTile)
 import Tile.Types exposing (Tile, Border(..))
 
 
@@ -42,3 +45,24 @@ tileG =
 tileF : Fuzzer Tile
 tileF =
     custom tileG tile
+
+
+tileListG : Generator (List Tile)
+tileListG =
+    let
+        tileGen : Generator (List Tile)
+        tileGen =
+            list 25 tileG
+
+        -- TODO: I think this should be possible in point-free style but
+        -- I'm having trouble thinking through the magical applicative (a,a)
+        -- instance that I need for that
+        tileToComparable : Tile -> ( Int, Int )
+        tileToComparable t =
+            ( .x << .location <| t, .y << .location <| t )
+    in
+        map (uniqueBy tileToComparable) tileGen
+
+tileListF : Fuzzer (List Tile)
+tileListF =
+    custom tileListG listTile

@@ -6,7 +6,7 @@ import Geom.Types exposing (Color(..), Coord)
 import GameUnit.Util exposing (newWizard, newOaf)
 import Tile.Types exposing (Tile, Border(..))
 import Tile.State exposing (addUnit, borders, reachable)
-import Fuzzers.Tile exposing (tileF)
+import Fuzzers.Tile exposing (tileF, tileListF)
 
 
 testBorders : Test
@@ -29,9 +29,10 @@ testBorders =
     in
         describe "Border tests"
             [ fuzz2 tileF tileF "The bordering relation should be commutative" <|
-                \t1 t2 -> Expect.true
-                  (toString t1.location ++ toString t2.location)
-                  (borders t1 t2 == borders t2 t1)
+                \t1 t2 ->
+                    Expect.true
+                        (toString t1.location ++ toString t2.location)
+                        (borders t1 t2 == borders t2 t1)
             , test "Adjacent tiles should compute to bordering each other" <|
                 \_ ->
                     Expect.all
@@ -112,18 +113,40 @@ testReachable =
                             (others tile11)
                         )
                         ()
-
             , fuzz2 tileF tileF "The reachable relation should be commutative" <|
                 \t1 t2 ->
                     Expect.true
                         (toString t1.location ++ toString t2.location)
                         (reachable t1 t2 == reachable t2 t1)
-
-            -- TODO: this should check the neighbors of each tile and confirm that reachable is True
-            -- as long as it's not the center tile
             , test "Neighboring pairs of tiles without walls between them should be reachable" <|
                 \_ ->
-                    Expect.true "" True
+                    Expect.all
+                        (List.map
+                            (\x ->
+                                \_ ->
+                                    if (x == tile11) then
+                                        Expect.true "Center can reach nothing" (List.all (not << reachable x) (others x))
+                                    else
+                                        Expect.true
+                                            "Tiles border their neighbors except the walled off tile"
+                                            (((List.map
+                                                (\y ->
+                                                    if (y == tile11) then
+                                                        not <| reachable x y
+                                                    else
+                                                        (reachable x y == borders x y)
+                                                )
+                                              )
+                                                (others x)
+                                             )
+                                                |> List.foldl
+                                                    (&&)
+                                                    True
+                                            )
+                            )
+                            allTiles
+                        )
+                        ()
             ]
 
 
@@ -161,17 +184,52 @@ testAddUnits =
                             Expect.equal (getAllUnits <| addUnit newOaf tile01 tiles) []
                         ]
                         ()
+            , fuzz tileListF "Adding units only affects the target tile" <|
+                \ts ->
+                    let
+                        firstTile =
+                            List.head tiles
 
-            -- TODO: from a list of tiles, verify that adding units to one tile doesn't
-            -- affect any other tiles
-            , test "Adding units only affects the target tile" <|
-                \_ ->
-                    Expect.true "" True
+                        addOafToTile =
+                            flip (addUnit newOaf) ts
 
-            -- TODO: verify that the number of units on a tile after adding a unit is
-            -- previous number + 1 (use a fuzzer for this eventually)
-            -- this will require a tileWithBaseF
-            , test "Adding a unit only adds one unit" <|
-                \_ ->
-                    Expect.true "" True
+                        addWizardToTile =
+                            flip (addUnit newWizard) ts
+
+                        testFromUnitAdd f ft =
+                            case ft of
+                                -- This is a trivial case that can't be exercised
+                                -- in real life
+                                Nothing ->
+                                    Expect.true "Trivial" True
+
+                                Just t ->
+                                    Expect.equal
+                                        (List.map2 (\x y -> .units x == .units y) (f t) ts)
+                                        (List.map (\x -> .location x /= .location t) ts)
+                    in
+                        Expect.all
+                            [ \_ ->
+                                testFromUnitAdd addOafToTile firstTile
+                            , \_ ->
+                                testFromUnitAdd addWizardToTile firstTile
+                            ]
+                            ()
+            , fuzz tileF "Adding a unit adds exactly one unit" <|
+                \tile ->
+                    let
+                        nUnits ts =
+                            (List.map (List.length << .units) ts) |> List.sum
+                    in
+                        Expect.all
+                            [ \_ ->
+                                Expect.equal
+                                    (addUnit newOaf tile [ tile ] |> nUnits)
+                                    (nUnits [ tile ] + 1)
+                            , \_ ->
+                                Expect.equal
+                                    (addUnit newWizard tile [ tile ] |> nUnits)
+                                    (nUnits [ tile ] + 1)
+                            ]
+                            ()
             ]
