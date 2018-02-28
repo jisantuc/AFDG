@@ -3,7 +3,7 @@ module View exposing (root)
 import Html exposing (Html, button, div, text)
 import Html.Attributes as HA
 import Html.Events exposing (onClick)
-import Messages exposing (..)
+import Messages exposing (Msg(..))
 import Types exposing (..)
 import Tile.View as TileView
 
@@ -33,8 +33,11 @@ root model =
         [ div [ HA.style [ ( "display", "flex" ), ( "flex-grow", "1" ) ] ]
             [ mkButton "Neighbors Mode" (NewMode Neighbors |> Just)
             , mkButton "Reachable Mode" (NewMode Reachable |> Just)
-            , mkButton "Add Oafs" (NewMode AddOafs |> Just)
-            , mkButton "Add Wizards" (NewMode AddWizards |> Just)
+            , mkButton "Add Oafs" (NewMode (AddOafs model.activeUser) |> Just)
+            , mkButton "Add Wizards" (NewMode (AddWizards model.activeUser) |> Just)
+            , mkButton "Remove a base" (NewMode RemoveBases |> Just)
+            , mkButton "Add a base" (NewMode (AddBases model.activeUser) |> Just)
+            , mkButton "Switch players" (SwitchUsers model |> Just)
             , mkButton "Nothing Mode" (NewMode Inactive |> Just)
             , mkButton "Clear" (Clear |> Just)
             ]

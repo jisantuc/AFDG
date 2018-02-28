@@ -10,7 +10,7 @@ application state
 
 -}
 
-import Types exposing (Mode)
+import Types exposing (Mode, Model)
 import Tile.Types as TileTypes
 
 
@@ -20,3 +20,4 @@ type Msg
     = Clear
     | TileSelect TileTypes.Tile
     | NewMode Mode
+    | SwitchUsers Model

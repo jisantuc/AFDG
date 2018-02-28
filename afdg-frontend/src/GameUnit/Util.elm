@@ -58,3 +58,15 @@ isWizard u =
 
         _ ->
             False
+
+
+{-| Get the color of a game unit
+-}
+getColor : GameUnit -> Color
+getColor unit =
+    case unit of
+        Oaf obj ->
+            .color obj
+
+        Wizard obj ->
+            .color obj

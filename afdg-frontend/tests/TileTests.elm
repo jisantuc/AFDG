@@ -6,6 +6,7 @@ import Geom.Types exposing (Color(..), Coord)
 import GameUnit.Util exposing (newWizard, newOaf)
 import Tile.Types exposing (Tile, Border(..))
 import Tile.State exposing (addUnit, borders, reachable)
+import User.Util exposing (user1)
 import Fuzzers.Tile exposing (tileF, tileListF)
 
 
@@ -175,13 +176,13 @@ testAddUnits =
                 \_ ->
                     Expect.all
                         [ \_ ->
-                            Expect.equal (getAllUnits <| addUnit newWizard tile00 tiles) []
+                            Expect.equal (getAllUnits <| addUnit newWizard user1 tile00 tiles) []
                         , \_ ->
-                            Expect.equal (getAllUnits <| addUnit newOaf tile00 tiles) []
+                            Expect.equal (getAllUnits <| addUnit newOaf user1 tile00 tiles) []
                         , \_ ->
-                            Expect.equal (getAllUnits <| addUnit newWizard tile01 tiles) []
+                            Expect.equal (getAllUnits <| addUnit newWizard user1 tile01 tiles) []
                         , \_ ->
-                            Expect.equal (getAllUnits <| addUnit newOaf tile01 tiles) []
+                            Expect.equal (getAllUnits <| addUnit newOaf user1 tile01 tiles) []
                         ]
                         ()
             , fuzz tileListF "Adding units only affects the target tile" <|
@@ -191,10 +192,10 @@ testAddUnits =
                             List.head tiles
 
                         addOafToTile =
-                            flip (addUnit newOaf) ts
+                            flip (addUnit newOaf user1) ts
 
                         addWizardToTile =
-                            flip (addUnit newWizard) ts
+                            flip (addUnit newWizard user1) ts
 
                         testFromUnitAdd f ft =
                             case ft of
@@ -224,11 +225,11 @@ testAddUnits =
                         Expect.all
                             [ \_ ->
                                 Expect.equal
-                                    (addUnit newOaf tile [ tile ] |> nUnits)
+                                    (addUnit newOaf user1 tile [ tile ] |> nUnits)
                                     (nUnits [ tile ] + 1)
                             , \_ ->
                                 Expect.equal
-                                    (addUnit newWizard tile [ tile ] |> nUnits)
+                                    (addUnit newWizard user1 tile [ tile ] |> nUnits)
                                     (nUnits [ tile ] + 1)
                             ]
                             ()

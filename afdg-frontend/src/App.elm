@@ -11,7 +11,7 @@ module App exposing (main)
 
 import Html exposing (Html)
 import Messages exposing (..)
-import State exposing (initialModel)
+import State exposing (initialModel, rotatePlayers)
 import Types exposing (Model, Mode(Inactive))
 import View exposing (root)
 import Tile.State as T
@@ -47,6 +47,9 @@ update msg state =
                     T.update state.activeMode tile state.tiles
             in
                 ( { state | tiles = updatedTiles }, Cmd.none )
+
+        SwitchUsers model ->
+            ( rotatePlayers model, Cmd.none )
 
         Clear ->
             ( initialModel, Cmd.none )

@@ -8,9 +8,11 @@ module Tile.State exposing (..)
 
 import Types exposing (Mode(..))
 import GameUnit.Util exposing (..)
-import GameUnit.Types exposing (GameUnit)
+import Base.Types exposing (Base)
+import GameUnit.Types exposing (GameUnit(..))
 import Geom.Types exposing (Coord, Color(..))
 import Tile.Types exposing (..)
+import User.Types exposing (User)
 
 
 {-| Check whether two tiles border each other
@@ -84,21 +86,63 @@ reachable tile other =
 
 {-| Increase the number of units on this tile by one
 -}
-addUnit : (Coord -> Color -> GameUnit) -> Tile -> List Tile -> List Tile
-addUnit f tile tiles =
-    case tile.base of
+addUnit : (Coord -> Color -> GameUnit) -> User -> Tile -> List Tile -> List Tile
+addUnit f user tile tiles =
+    case Maybe.map .ownedBy tile.base of
         Nothing ->
             tiles
 
-        Just b ->
+        Just user ->
             List.map
                 (\x ->
                     if (x == tile) then
-                        { x | units = f tile.location b.ownedBy.color :: x.units }
+                        { x | units = f tile.location user.color :: x.units }
                     else
                         x
                 )
                 tiles
+
+
+{-| Put a base on the clicked on tile for the current player if it doesn't have one
+-}
+addBase : User -> Tile -> List Tile -> List Tile
+addBase user tile tiles =
+    let
+        addBaseToTile tile =
+            List.map
+                (\x ->
+                    if (x == tile) then
+                        { x | base = Base user |> Just }
+                    else
+                        x
+                )
+    in
+        case ( tile.base, .units tile |> List.head ) of
+            ( Nothing, Nothing ) ->
+                addBaseToTile tile tiles
+
+            ( Nothing, Just gameUnit ) ->
+                if (getColor gameUnit == user.color) then
+                    addBaseToTile tile tiles
+                else
+                    tiles
+
+            ( Just _, _ ) ->
+                tiles
+
+
+{-| Remove a base from the clicked on tile if it has one
+-}
+removeBase : Tile -> List Tile -> List Tile
+removeBase tile tiles =
+    List.map
+        (\x ->
+            if (x == tile) then
+                { x | base = Nothing }
+            else
+                x
+        )
+        tiles
 
 
 
@@ -117,8 +161,14 @@ update mode tile tiles =
         Reachable ->
             highlightTiles reachable tile tiles
 
-        AddOafs ->
-            addUnit newOaf tile tiles
+        AddOafs user ->
+            addUnit newOaf user tile tiles
 
-        AddWizards ->
-            addUnit newWizard tile tiles
+        AddWizards user ->
+            addUnit newWizard user tile tiles
+
+        AddBases user ->
+            addBase user tile tiles
+
+        RemoveBases ->
+            removeBase tile tiles
