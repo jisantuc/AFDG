@@ -74,10 +74,10 @@ reachable tile other =
                     ( -1, _ ) ->
                         not <| List.member East tile.walls || List.member West other.walls
 
-                    ( _, 1 ) ->
+                    ( _, -1 ) ->
                         not <| List.member South tile.walls || List.member North other.walls
 
-                    ( _, -1 ) ->
+                    ( _, 1 ) ->
                         not <| List.member North tile.walls || List.member South other.walls
 
                     _ ->
