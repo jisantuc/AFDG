@@ -2,6 +2,7 @@ module Tile.Types exposing (..)
 
 {-| Types to support the Tile module
 
+
 # Exported Types
 
 @doc Border, Tile

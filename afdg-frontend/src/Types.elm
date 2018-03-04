@@ -9,7 +9,7 @@ module Types exposing (Model, Mode(..))
 
 -}
 
-import Tile.Types exposing (Tile)
+import Tile.Types exposing (Border, Tile)
 import User.Types exposing (User)
 
 
@@ -21,6 +21,8 @@ type Mode
     | AddWizards User
     | RemoveBases
     | AddBases User
+    | RemoveBorders
+    | AddBorders
 
 
 type alias Model =

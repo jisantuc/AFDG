@@ -5,7 +5,7 @@ module Tile.View exposing (..)
 
 # Renderers
 
-@doc lines, base, units, view
+@doc walls, base, units, view
 
 
 # Helpers
@@ -30,57 +30,108 @@ import Svg.Attributes
         , ry
         , stroke
         , strokeWidth
+        , strokeDasharray
         , height
         , width
         , fill
         , viewBox
         )
 import Messages exposing (..)
+import Types exposing (Mode(AddBorders, RemoveBorders))
 import Base.View
 import GameUnit.View as GU
+import Tile.State exposing (addBorder, removeBorder)
 import Geom.Types exposing (Coord)
 import Tile.Types exposing (..)
 import Geom.Util exposing (colorToString)
+import Tile.Util exposing (borderComplement)
+
+
+type alias Dashed =
+    Bool
+
+
+type alias SvgStyles =
+    List (Svg.Attribute Msg)
 
 
 {-| Draw an svg line from coord to coord
 -}
-drawLine : Coord -> Coord -> Svg Msg
-drawLine c1 c2 =
-    line
-        [ toString c1.x |> x1
-        , toString c2.x |> x2
-        , toString c1.y |> y1
-        , toString c2.y |> y2
-        , strokeWidth "3"
-        , stroke "black"
-        ]
-        []
+drawLine : SvgStyles -> Svg Msg
+drawLine styles =
+    line styles []
+
+
+getBorderSvgAttributes : Int -> Int -> Int -> Int -> Mode -> Tile -> Border -> SvgStyles
+getBorderSvgAttributes xOne yOne xTwo yTwo mode tile border =
+    let
+        baseStyles =
+            [ toString xOne |> x1
+            , toString xTwo |> x2
+            , toString yOne |> y1
+            , toString yTwo |> y2
+            , strokeWidth "3"
+            , stroke "black"
+            ]
+    in
+        (case ( mode, List.member border tile.walls ) of
+            ( RemoveBorders, True ) ->
+                [ onClick (RemoveBorder border tile) ]
+
+            ( AddBorders, False ) ->
+                [ onClick (AddBorder border tile)
+                , strokeDasharray "5, 5"
+                ]
+
+            _ ->
+                []
+        )
+            |> (++) baseStyles
 
 
 {-| Create an SVG line from a Border
 -}
-mkLine : Border -> Svg Msg
-mkLine bord =
-    case bord of
+mkLine : Mode -> Tile -> Border -> Svg Msg
+mkLine mode tile border =
+    case border of
         North ->
-            drawLine (Coord 25 25) (Coord 375 25)
+            getBorderSvgAttributes 25 25 375 25 mode tile border |> (flip line) []
 
         East ->
-            drawLine (Coord 375 25) (Coord 375 375)
+            getBorderSvgAttributes 375 25 375 375 mode tile border |> (flip line) []
 
         West ->
-            drawLine (Coord 25 25) (Coord 25 375)
+            getBorderSvgAttributes 25 25 25 375 mode tile border |> (flip line) []
 
         South ->
-            drawLine (Coord 25 375) (Coord 375 375)
+            getBorderSvgAttributes 25 375 375 375 mode tile border |> (flip line) []
 
 
 {-| Draw lines for a tile's walls
 -}
-lines : Tile -> List (Svg Msg)
-lines tile =
-    List.map mkLine tile.walls
+walls : Mode -> Tile -> List (Svg Msg)
+walls mode tile =
+    List.map (mkLine mode tile) tile.walls
+
+
+{-| Draw placeholders for where walls could be added
+-}
+
+
+
+-- TODO: add test making sure that in all modes other than AddBorder,
+-- this returns an empty list
+
+
+addableWalls : Mode -> Tile -> List (Svg Msg)
+addableWalls mode tile =
+    case mode of
+        AddBorders ->
+            borderComplement (tile.walls)
+                |> List.map (mkLine mode tile)
+
+        _ ->
+            []
 
 
 {-| Draw this tile's base, if it has one
@@ -104,8 +155,8 @@ units tile =
 
 {-| Show a tile as an SVG rectangle
 -}
-view : Tile -> Html Msg
-view tile =
+view : Mode -> Tile -> Html Msg
+view mode tile =
     div
         [ HA.style
             [ ( "display", "flex" )
@@ -131,7 +182,8 @@ view tile =
                 ]
                 []
             ]
-                ++ lines tile
+                ++ walls mode tile
+                ++ addableWalls mode tile
                 ++ base tile
                 ++ units tile
         ]

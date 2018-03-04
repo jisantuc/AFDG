@@ -35,7 +35,7 @@ update msg state =
             let
                 updatedTiles =
                     if m == Inactive then
-                        (T.update m nullTile (state.tiles))
+                        (T.update m Nothing nullTile (state.tiles))
                     else
                         state.tiles
             in
@@ -44,12 +44,26 @@ update msg state =
         TileSelect tile ->
             let
                 updatedTiles =
-                    T.update state.activeMode tile state.tiles
+                    T.update state.activeMode Nothing tile state.tiles
             in
                 ( { state | tiles = updatedTiles }, Cmd.none )
 
         SwitchUsers model ->
             ( rotatePlayers model, Cmd.none )
+
+        AddBorder border tile ->
+            let
+                updatedTiles =
+                    T.update state.activeMode (Just border) tile state.tiles
+            in
+                ( { state | tiles = updatedTiles }, Cmd.none )
+
+        RemoveBorder border tile ->
+            let
+                updatedTiles =
+                    T.update state.activeMode (Just border) tile state.tiles
+            in
+                ( { state | tiles = updatedTiles }, Cmd.none )
 
         Clear ->
             ( initialModel, Cmd.none )

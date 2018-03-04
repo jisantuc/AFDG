@@ -145,30 +145,77 @@ removeBase tile tiles =
         tiles
 
 
+{-| Remove a border from this tile
+-}
+removeBorder : Tile -> Border -> List Tile -> List Tile
+removeBorder tile border tiles =
+    List.map
+        (\x ->
+            if (x == tile) then
+                { x | walls = List.filter ((/=) border) x.walls }
+            else
+                x
+        )
+        tiles
+
+
+{-| Add a border to this tile
+-}
+addBorder : Tile -> Border -> List Tile -> List Tile
+addBorder tile border tiles =
+    let
+        -- awww yeah let's get it point-free
+        hasBorder =
+            (flip List.member) << .walls
+    in
+        case hasBorder tile border of
+            True ->
+                tiles
+
+            False ->
+                List.map
+                    (\x ->
+                        if (x == tile) then
+                            { x | walls = border :: x.walls }
+                        else
+                            x
+                    )
+                    tiles
+
+
 
 -- UPDATE
 
 
-update : Mode -> Tile -> List Tile -> List Tile
-update mode tile tiles =
-    case mode of
-        Inactive ->
+update : Mode -> Maybe Border -> Tile -> List Tile -> List Tile
+update mode mbBorder tile tiles =
+    case ( mode, mbBorder ) of
+        ( Inactive, Nothing ) ->
             List.map (\x -> { x | fillColor = Color "none" }) tiles
 
-        Neighbors ->
+        ( Neighbors, Nothing ) ->
             highlightTiles borders tile tiles
 
-        Reachable ->
+        ( Reachable, Nothing ) ->
             highlightTiles reachable tile tiles
 
-        AddOafs user ->
+        ( AddOafs user, Nothing ) ->
             addUnit newOaf user tile tiles
 
-        AddWizards user ->
+        ( AddWizards user, Nothing ) ->
             addUnit newWizard user tile tiles
 
-        AddBases user ->
+        ( AddBases user, Nothing ) ->
             addBase user tile tiles
 
-        RemoveBases ->
+        ( RemoveBases, Nothing ) ->
             removeBase tile tiles
+
+        ( AddBorders, Just border ) ->
+            addBorder tile border tiles
+
+        ( RemoveBorders, Just border ) ->
+            removeBorder tile border tiles
+
+        _ ->
+            tiles

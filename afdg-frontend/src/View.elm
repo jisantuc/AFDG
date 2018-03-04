@@ -35,6 +35,8 @@ root model =
             , mkButton "Reachable Mode" (NewMode Reachable |> Just)
             , mkButton "Add Oafs" (NewMode (AddOafs model.activeUser) |> Just)
             , mkButton "Add Wizards" (NewMode (AddWizards model.activeUser) |> Just)
+            , mkButton "Add Borders" (NewMode AddBorders |> Just)
+            , mkButton "Remove Borders" (NewMode RemoveBorders |> Just)
             , mkButton "Remove a base" (NewMode RemoveBases |> Just)
             , mkButton "Add a base" (NewMode (AddBases model.activeUser) |> Just)
             , mkButton "Switch players" (SwitchUsers model |> Just)
@@ -51,6 +53,6 @@ root model =
             ]
           <|
             List.map
-                TileView.view
+                (TileView.view model.activeMode)
                 model.tiles
         ]

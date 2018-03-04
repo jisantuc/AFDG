@@ -63,6 +63,7 @@ tileListG =
     in
         map (uniqueBy tileToComparable) tileGen
 
+
 tileListF : Fuzzer (List Tile)
 tileListF =
     custom tileListG listTile

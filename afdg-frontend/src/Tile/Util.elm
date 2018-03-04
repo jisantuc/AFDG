@@ -43,3 +43,12 @@ someTiles =
 nullTile : Tile
 nullTile =
     Tile { x = -9, y = -9 } (Color "none") False [] Nothing []
+
+
+{-| Get border types not present in a list of borders
+-}
+borderComplement : List Border -> List Border
+borderComplement borders =
+    List.filter
+        (\border -> List.member border borders |> not)
+        [ North, South, East, West ]

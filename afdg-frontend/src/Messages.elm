@@ -21,3 +21,5 @@ type Msg
     | TileSelect TileTypes.Tile
     | NewMode Mode
     | SwitchUsers Model
+    | AddBorder TileTypes.Border TileTypes.Tile
+    | RemoveBorder TileTypes.Border TileTypes.Tile
