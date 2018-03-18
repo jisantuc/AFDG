@@ -23,6 +23,8 @@ type Mode
     | AddBases User
     | RemoveBorders
     | AddBorders
+    | SwitchTiles
+    | SelectSwitchTileTarget
 
 
 type alias Model =
@@ -30,4 +32,5 @@ type alias Model =
     , activeMode : Mode
     , activeUser : User
     , users : List User
+    , switchSource : Maybe Tile
     }

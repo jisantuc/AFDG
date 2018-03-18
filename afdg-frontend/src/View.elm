@@ -40,6 +40,7 @@ root model =
             , mkButton "Remove a base" (NewMode RemoveBases |> Just)
             , mkButton "Add a base" (NewMode (AddBases model.activeUser) |> Just)
             , mkButton "Switch players" (SwitchUsers model |> Just)
+            , mkButton "Switch tiles" (NewMode SwitchTiles |> Just)
             , mkButton "Nothing Mode" (NewMode Inactive |> Just)
             , mkButton "Clear" (Clear |> Just)
             ]

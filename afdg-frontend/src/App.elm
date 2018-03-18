@@ -11,7 +11,7 @@ module App exposing (main)
 
 import Html exposing (Html)
 import Messages exposing (..)
-import State exposing (initialModel, rotatePlayers)
+import State exposing (initialModel, rotatePlayers, setSwitchSource)
 import Types exposing (Model, Mode(Inactive))
 import View exposing (root)
 import Tile.State as T
@@ -64,6 +64,17 @@ update msg state =
                     T.update state.activeMode (Just border) tile state.tiles
             in
                 ( { state | tiles = updatedTiles }, Cmd.none )
+
+        SelectSwitchSource tile ->
+            setSwitchSource tile state
+
+        SwitchWithTile tile ->
+            ( { state
+                | tiles = T.maybeSwitchTiles state.tiles state.switchSource tile
+                , switchSource = Nothing
+              }
+            , Cmd.none
+            )
 
         Clear ->
             ( initialModel, Cmd.none )

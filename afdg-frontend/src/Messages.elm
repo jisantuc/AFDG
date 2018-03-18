@@ -23,3 +23,5 @@ type Msg
     | SwitchUsers Model
     | AddBorder TileTypes.Border TileTypes.Tile
     | RemoveBorder TileTypes.Border TileTypes.Tile
+    | SwitchWithTile TileTypes.Tile
+    | SelectSwitchSource TileTypes.Tile

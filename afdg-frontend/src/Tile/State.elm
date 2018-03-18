@@ -183,6 +183,40 @@ addBorder tile border tiles =
                     tiles
 
 
+{-| Switch two tiles that border each other
+-}
+switchTiles : List Tile -> Tile -> Tile -> List Tile
+switchTiles tiles source target =
+    let
+        subTile t =
+            case ( t == source, t == target ) of
+                ( True, False ) ->
+                    { target | location = source.location }
+
+                ( False, True ) ->
+                    { source | location = target.location }
+
+                _ ->
+                    t
+    in
+        List.map subTile tiles
+
+
+{-| Maybe switch two tiles, provided the source tile is available
+-}
+maybeSwitchTiles : List Tile -> Maybe Tile -> Tile -> List Tile
+maybeSwitchTiles tiles maybeSourceTile tile =
+    case maybeSourceTile of
+        Nothing ->
+            tiles
+
+        Just source ->
+            if ((borders tile source) |> not) then
+                tiles
+            else
+                switchTiles tiles source tile
+
+
 
 -- UPDATE
 

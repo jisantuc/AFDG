@@ -37,11 +37,9 @@ import Svg.Attributes
         , viewBox
         )
 import Messages exposing (..)
-import Types exposing (Mode(AddBorders, RemoveBorders))
+import Types exposing (Mode(AddBorders, RemoveBorders, SelectSwitchTileTarget, SwitchTiles))
 import Base.View
 import GameUnit.View as GU
-import Tile.State exposing (addBorder, removeBorder)
-import Geom.Types exposing (Coord)
 import Tile.Types exposing (..)
 import Geom.Util exposing (colorToString)
 import Tile.Util exposing (borderComplement)
@@ -153,6 +151,19 @@ units tile =
     GU.view tile.units
 
 
+getOnClick : Mode -> (Tile -> Msg)
+getOnClick mode =
+    case mode of
+        SwitchTiles ->
+            SelectSwitchSource
+
+        SelectSwitchTileTarget ->
+            SwitchWithTile
+
+        _ ->
+            TileSelect
+
+
 {-| Show a tile as an SVG rectangle
 -}
 view : Mode -> Tile -> Html Msg
@@ -166,7 +177,7 @@ view mode tile =
         ]
         [ svg
             [ viewBox "0 0 400 400"
-            , onClick (TileSelect tile)
+            , (getOnClick mode) tile |> onClick
             ]
           <|
             [ rect
