@@ -40,6 +40,10 @@ deploy:
     afdg-game
   region:
     us-east-1
+  skip_cleanup:
+    true
+  local_dir:
+    build
   secret_access_key:
     secure: M+6aCogup8M7Jtl0hkvHkkz0L0nXd5sGiHd4ytGu3q239CCV5/aM273jvO3O7IWU49Rw8K02l1Qyn3iF+QOfLRa4DFewpNb6vYGG1il3k6tsyOcVz6TIkRlfx5DiMlgzu/Gvq9zxCHmeE6TKVB77+9JVmCv361HuJIRf1EvlaeHwf4ANqefSovuMbr2csv/3uSACX9LxHY5BpWPjUnxboVLmCOTPoBnsmMjPiAJS1HATDuhTLewC+t6tSsqnpTEcJQvoet2v1JTC/08dDIsZ26esunASJ+thqcwtvd4Vx4JSC71GlKHt9pfopcTMjy3rKxExnPFZGh/lDIOexJyBsLJliMU+i4kqugyRyCrGfWILcm30ZadDpXnxUGwJSxtwsGZ2PJq/gRbiVh4dosjjpOW60D9cwirJN4whu5rINfav0QEsCvfkH+v4mkGfiV/bKvdQ8UjRWgoeretMWFjT0huPIA5sinL2KYwKGgi2yCh//zOG1b0XSbx9eraM9gjYXlknygz4C0SzYSJuK+awRt9tK76xGCA0b7ouGiSdLoSpprSBnXg3exVhCYPRHBdTChAy5/osVV2KAFJpc5b8+7q8A+BhJMMzTar6LzJwEgl4z7qOmASXacktfW6kGOeH//+krZquyOr4PWaDv2UKIab0UoV/8Pau2ty9RBrJFEs=
   access_key_id:

@@ -2,8 +2,10 @@
 
 set -ex
 
+mkdir -p build
+
 cd afdg-frontend
 
-elm-make --yes src/App.elm --output ../index.html
+elm-make --yes src/App.elm --output ../build/index.html
 
 cd ../
