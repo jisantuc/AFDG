@@ -1,16 +1,10 @@
 #!/bin/bash
 set -e
 
-if [[ -n "${RF_DEBUG}" ]]; then
-    set -x
-fi
-
-GIT_COMMIT="${GIT_COMMIT:-latest}"
-
 function usage() {
     echo -n \
 "Usage: $(basename "$0")
-Run various test suites.
+Run test suites.
 "
 }
 
@@ -21,8 +15,8 @@ then
         usage
     else
         echo "Testing frontend code"
-        cd afdg-frontend
-        elm-test --verbose
-        cd ../
+        pushd afdg-frontend
+        elm make src/Main.elm
+        popd
     fi
 fi
