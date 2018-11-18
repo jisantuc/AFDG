@@ -1,4 +1,4 @@
-module GameUnit.Types exposing (..)
+module GameUnit.Types exposing (GameUnit(..), OafRecord, WizardRecord)
 
 {-| Types to support Oaf and Wizard units
 

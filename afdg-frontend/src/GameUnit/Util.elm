@@ -1,4 +1,4 @@
-module GameUnit.Util exposing (..)
+module GameUnit.Util exposing (getColor, isOaf, isWizard, newOaf, newWizard)
 
 {-| Utilities for working with game units
 
@@ -9,8 +9,8 @@ module GameUnit.Util exposing (..)
 
 -}
 
-import Geom.Types exposing (..)
 import GameUnit.Types exposing (..)
+import Geom.Types exposing (..)
 
 
 {-| Create a new oaf at a location with a given color

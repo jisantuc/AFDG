@@ -1,4 +1,4 @@
-module Tile.View exposing (..)
+module Tile.View exposing (Dashed, SvgStyles, addableWalls, base, drawLine, getBorderSvgAttributes, getOnClick, mkLine, units, view, walls)
 
 {-| Render tiles to html
 
@@ -14,35 +14,34 @@ module Tile.View exposing (..)
 
 -}
 
+import Base.View
+import GameUnit.View as GU
+import Geom.Util exposing (colorToString)
 import Html exposing (Html, div)
-import Html.Attributes as HA
 import Html.Events exposing (onClick)
+import Messages exposing (..)
 import Svg exposing (Svg, line, rect, svg)
 import Svg.Attributes
     exposing
-        ( x
-        , y
-        , x1
-        , y1
-        , x2
-        , y2
+        ( fill
+        , height
         , rx
         , ry
         , stroke
-        , strokeWidth
         , strokeDasharray
-        , height
-        , width
-        , fill
+        , strokeWidth
         , viewBox
+        , width
+        , x
+        , x1
+        , x2
+        , y
+        , y1
+        , y2
         )
-import Messages exposing (..)
-import Types exposing (Mode(AddBorders, RemoveBorders, SelectSwitchTileTarget, SwitchTiles))
-import Base.View
-import GameUnit.View as GU
 import Tile.Types exposing (..)
-import Geom.Util exposing (colorToString)
 import Tile.Util exposing (borderComplement)
+import Types exposing (Mode(..))
 
 
 type alias Dashed =
@@ -64,27 +63,32 @@ getBorderSvgAttributes : Int -> Int -> Int -> Int -> Mode -> Tile -> Border -> S
 getBorderSvgAttributes xOne yOne xTwo yTwo mode tile border =
     let
         baseStyles =
-            [ toString xOne |> x1
-            , toString xTwo |> x2
-            , toString yOne |> y1
-            , toString yTwo |> y2
+            [ String.fromInt xOne |> x1
+            , String.fromInt xTwo |> x2
+            , String.fromInt yOne |> y1
+            , String.fromInt yTwo |> y2
             , strokeWidth "3"
             , stroke "black"
             ]
     in
-        (case ( mode, List.member border tile.walls ) of
-            ( RemoveBorders, True ) ->
-                [ onClick (RemoveBorder border tile) ]
+    (case ( mode, List.member border tile.walls ) of
+        ( RemoveBorders, True ) ->
+            [ onClick (RemoveBorder border tile) ]
 
-            ( AddBorders, False ) ->
-                [ onClick (AddBorder border tile)
-                , strokeDasharray "5, 5"
-                ]
+        ( AddBorders, False ) ->
+            [ onClick (AddBorder border tile)
+            , strokeDasharray "5, 5"
+            ]
 
-            _ ->
-                []
-        )
-            |> (++) baseStyles
+        _ ->
+            []
+    )
+        |> (++) baseStyles
+
+
+flippedLine : List (Svg Msg) -> List (Svg.Attribute Msg) -> Svg Msg
+flippedLine msgs attrs =
+    line attrs msgs
 
 
 {-| Create an SVG line from a Border
@@ -93,16 +97,16 @@ mkLine : Mode -> Tile -> Border -> Svg Msg
 mkLine mode tile border =
     case border of
         North ->
-            getBorderSvgAttributes 25 25 375 25 mode tile border |> (flip line) []
+            getBorderSvgAttributes 25 25 375 25 mode tile border |> flippedLine []
 
         East ->
-            getBorderSvgAttributes 375 25 375 375 mode tile border |> (flip line) []
+            getBorderSvgAttributes 375 25 375 375 mode tile border |> flippedLine []
 
         West ->
-            getBorderSvgAttributes 25 25 25 375 mode tile border |> (flip line) []
+            getBorderSvgAttributes 25 25 25 375 mode tile border |> flippedLine []
 
         South ->
-            getBorderSvgAttributes 25 375 375 375 mode tile border |> (flip line) []
+            getBorderSvgAttributes 25 375 375 375 mode tile border |> flippedLine []
 
 
 {-| Draw lines for a tile's walls
@@ -125,7 +129,7 @@ addableWalls : Mode -> Tile -> List (Svg Msg)
 addableWalls mode tile =
     case mode of
         AddBorders ->
-            borderComplement (tile.walls)
+            borderComplement tile.walls
                 |> List.map (mkLine mode tile)
 
         _ ->
@@ -169,15 +173,10 @@ getOnClick mode =
 view : Mode -> Tile -> Html Msg
 view mode tile =
     div
-        [ HA.style
-            [ ( "display", "flex" )
-            , ( "padding", "8px" )
-            , ( "flex-basis", "23%" )
-            ]
-        ]
+        []
         [ svg
             [ viewBox "0 0 400 400"
-            , (getOnClick mode) tile |> onClick
+            , getOnClick mode tile |> onClick
             ]
           <|
             [ rect

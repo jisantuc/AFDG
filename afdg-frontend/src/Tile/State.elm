@@ -1,4 +1,4 @@
-module Tile.State exposing (..)
+module Tile.State exposing (addBase, addBorder, addUnit, borders, highlightTiles, maybeSwitchTiles, reachable, removeBase, removeBorder, switchTiles, update)
 
 {-| State transformations for grid information
 
@@ -6,12 +6,12 @@ module Tile.State exposing (..)
 
 -}
 
-import Types exposing (Mode(..))
-import GameUnit.Util exposing (..)
 import Base.Types exposing (Base)
 import GameUnit.Types exposing (GameUnit(..))
-import Geom.Types exposing (Coord, Color(..))
+import GameUnit.Util exposing (..)
+import Geom.Types exposing (Color(..), Coord)
 import Tile.Types exposing (..)
+import Types exposing (Mode(..))
 import User.Types exposing (User)
 
 
@@ -29,7 +29,7 @@ borders tile other =
         totalDist =
             xDist + yDist
     in
-        xDist <= 1 && yDist <= 1 && totalDist == 1
+    xDist <= 1 && yDist <= 1 && totalDist == 1
 
 
 {-| Color a reference tile red and tiles that meet some condition blue
@@ -40,10 +40,12 @@ highlightTiles cond tile tiles =
         (\x ->
             { x
                 | fillColor =
-                    if (cond x tile) then
+                    if cond x tile then
                         Color "blue"
+
                     else if x == tile then
                         Color "red"
+
                     else
                         Color "none"
             }
@@ -55,7 +57,7 @@ highlightTiles cond tile tiles =
 -}
 reachable : Tile -> Tile -> Bool
 reachable tile other =
-    case (borders tile other) of
+    case borders tile other of
         False ->
             False
 
@@ -67,21 +69,19 @@ reachable tile other =
                 yDiff =
                     tile.location.y - other.location.y
             in
-                case ( xDiff, yDiff ) of
-                    ( 1, _ ) ->
-                        not <| List.member West tile.walls || List.member East other.walls
+            case ( xDiff, yDiff ) of
+                ( 1, _ ) ->
+                    not <| List.member West tile.walls || List.member East other.walls
 
-                    ( -1, _ ) ->
-                        not <| List.member East tile.walls || List.member West other.walls
+                -- ( -1, _ ) ->
+                --     not <| List.member East tile.walls || List.member West other.walls
+                -- ( _, -1 ) ->
+                --     not <| List.member South tile.walls || List.member North other.walls
+                ( _, 1 ) ->
+                    not <| List.member North tile.walls || List.member South other.walls
 
-                    ( _, -1 ) ->
-                        not <| List.member South tile.walls || List.member North other.walls
-
-                    ( _, 1 ) ->
-                        not <| List.member North tile.walls || List.member South other.walls
-
-                    _ ->
-                        False
+                _ ->
+                    False
 
 
 {-| Increase the number of units on this tile by one
@@ -92,11 +92,12 @@ addUnit f user tile tiles =
         Nothing ->
             tiles
 
-        Just user ->
+        Just owner ->
             List.map
                 (\x ->
-                    if (x == tile) then
-                        { x | units = f tile.location user.color :: x.units }
+                    if x == tile then
+                        { x | units = f tile.location owner.color :: x.units }
+
                     else
                         x
                 )
@@ -108,27 +109,29 @@ addUnit f user tile tiles =
 addBase : User -> Tile -> List Tile -> List Tile
 addBase user tile tiles =
     let
-        addBaseToTile tile =
+        addBaseToTile targetTile =
             List.map
                 (\x ->
-                    if (x == tile) then
+                    if x == targetTile then
                         { x | base = Base user |> Just }
+
                     else
                         x
                 )
     in
-        case ( tile.base, .units tile |> List.head ) of
-            ( Nothing, Nothing ) ->
+    case ( tile.base, .units tile |> List.head ) of
+        ( Nothing, Nothing ) ->
+            addBaseToTile tile tiles
+
+        ( Nothing, Just gameUnit ) ->
+            if getColor gameUnit == user.color then
                 addBaseToTile tile tiles
 
-            ( Nothing, Just gameUnit ) ->
-                if (getColor gameUnit == user.color) then
-                    addBaseToTile tile tiles
-                else
-                    tiles
-
-            ( Just _, _ ) ->
+            else
                 tiles
+
+        ( Just _, _ ) ->
+            tiles
 
 
 {-| Remove a base from the clicked on tile if it has one
@@ -137,8 +140,9 @@ removeBase : Tile -> List Tile -> List Tile
 removeBase tile tiles =
     List.map
         (\x ->
-            if (x == tile) then
+            if x == tile then
                 { x | base = Nothing }
+
             else
                 x
         )
@@ -151,8 +155,9 @@ removeBorder : Tile -> Border -> List Tile -> List Tile
 removeBorder tile border tiles =
     List.map
         (\x ->
-            if (x == tile) then
+            if x == tile then
                 { x | walls = List.filter ((/=) border) x.walls }
+
             else
                 x
         )
@@ -164,23 +169,23 @@ removeBorder tile border tiles =
 addBorder : Tile -> Border -> List Tile -> List Tile
 addBorder tile border tiles =
     let
-        -- awww yeah let's get it point-free
-        hasBorder =
-            (flip List.member) << .walls
+        hasBorder check direction =
+            List.member direction (.walls check)
     in
-        case hasBorder tile border of
-            True ->
-                tiles
+    case hasBorder tile border of
+        True ->
+            tiles
 
-            False ->
-                List.map
-                    (\x ->
-                        if (x == tile) then
-                            { x | walls = border :: x.walls }
-                        else
-                            x
-                    )
-                    tiles
+        False ->
+            List.map
+                (\x ->
+                    if x == tile then
+                        { x | walls = border :: x.walls }
+
+                    else
+                        x
+                )
+                tiles
 
 
 {-| Switch two tiles that border each other
@@ -199,7 +204,7 @@ switchTiles tiles source target =
                 _ ->
                     t
     in
-        List.map subTile tiles
+    List.map subTile tiles
 
 
 {-| Maybe switch two tiles, provided the source tile is available
@@ -211,8 +216,9 @@ maybeSwitchTiles tiles maybeSourceTile tile =
             tiles
 
         Just source ->
-            if ((borders tile source) |> not) then
+            if borders tile source |> not then
                 tiles
+
             else
                 switchTiles tiles source tile
 

@@ -9,21 +9,21 @@ module App exposing (main)
 
 -}
 
+import Browser
 import Html exposing (Html)
 import Messages exposing (..)
-import State exposing (initialModel, rotatePlayers, setSwitchSource)
-import Types exposing (Model, Mode(Inactive))
-import View exposing (root)
+import State exposing (init, rotatePlayers, setSwitchSource)
 import Tile.State as T
 import Tile.Util exposing (nullTile)
+import Types exposing (Mode(..), Model)
+import View exposing (root)
 
 
-main : Program Never Model Msg
 main =
-    Html.program
+    Browser.document
         { view = root
         , update = update
-        , init = ( initialModel, Cmd.none )
+        , init = init
         , subscriptions = subscriptions
         }
 
@@ -35,18 +35,19 @@ update msg state =
             let
                 updatedTiles =
                     if m == Inactive then
-                        (T.update m Nothing nullTile (state.tiles))
+                        T.update m Nothing nullTile state.tiles
+
                     else
                         state.tiles
             in
-                ( { state | activeMode = m, tiles = updatedTiles }, Cmd.none )
+            ( { state | activeMode = m, tiles = updatedTiles }, Cmd.none )
 
         TileSelect tile ->
             let
                 updatedTiles =
                     T.update state.activeMode Nothing tile state.tiles
             in
-                ( { state | tiles = updatedTiles }, Cmd.none )
+            ( { state | tiles = updatedTiles }, Cmd.none )
 
         SwitchUsers model ->
             ( rotatePlayers model, Cmd.none )
@@ -56,14 +57,14 @@ update msg state =
                 updatedTiles =
                     T.update state.activeMode (Just border) tile state.tiles
             in
-                ( { state | tiles = updatedTiles }, Cmd.none )
+            ( { state | tiles = updatedTiles }, Cmd.none )
 
         RemoveBorder border tile ->
             let
                 updatedTiles =
                     T.update state.activeMode (Just border) tile state.tiles
             in
-                ( { state | tiles = updatedTiles }, Cmd.none )
+            ( { state | tiles = updatedTiles }, Cmd.none )
 
         SelectSwitchSource tile ->
             setSwitchSource tile state
@@ -77,7 +78,7 @@ update msg state =
             )
 
         Clear ->
-            ( initialModel, Cmd.none )
+            init ()
 
 
 subscriptions : Model -> Sub Msg

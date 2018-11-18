@@ -32,7 +32,7 @@ testBorders =
             [ fuzz2 tileF tileF "The bordering relation should be commutative" <|
                 \t1 t2 ->
                     Expect.true
-                        (toString t1.location ++ toString t2.location)
+                        (String.fromInt t1.location ++ String.fromInt t2.location)
                         (borders t1 t2 == borders t2 t1)
             , test "Adjacent tiles should compute to bordering each other" <|
                 \_ ->
@@ -108,7 +108,7 @@ testReachable =
                     Expect.all
                         (List.map
                             (\x _ ->
-                                Expect.false ("Reachable from middle" ++ toString x.location) <|
+                                Expect.false ("Reachable from middle" ++ String.fromInt x.location) <|
                                     reachable tile11 x
                             )
                             (others tile11)
@@ -117,7 +117,7 @@ testReachable =
             , fuzz2 tileF tileF "The reachable relation should be commutative" <|
                 \t1 t2 ->
                     Expect.true
-                        (toString t1.location ++ toString t2.location)
+                        (String.fromInt t1.location ++ String.fromInt t2.location)
                         (reachable t1 t2 == reachable t2 t1)
             , test "Neighboring pairs of tiles without walls between them should be reachable" <|
                 \_ ->

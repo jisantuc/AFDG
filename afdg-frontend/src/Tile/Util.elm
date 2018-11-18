@@ -1,4 +1,4 @@
-module Tile.Util exposing (..)
+module Tile.Util exposing (borderComplement, nullTile, someTiles)
 
 {-| Utilities related to tiles
 
@@ -10,7 +10,7 @@ module Tile.Util exposing (..)
 -}
 
 import Base.Util exposing (user1Base, user2Base)
-import Geom.Types exposing (Coord, Color(..))
+import Geom.Types exposing (Color(..), Coord)
 import Tile.Types exposing (..)
 
 
@@ -26,8 +26,9 @@ someTiles =
         bases =
             List.map
                 (\x ->
-                    if x % 2 == 0 then
+                    if remainderBy 2 x == 0 then
                         user1Base
+
                     else
                         user2Base
                 )
@@ -37,7 +38,7 @@ someTiles =
         coords =
             List.map2 Coord xs ys
     in
-        List.map2 (\c b -> Tile c (Color "none") False [ North, South ] (Just b) []) coords bases
+    List.map2 (\c b -> Tile c (Color "none") False [ North, South ] (Just b) []) coords bases
 
 
 nullTile : Tile

@@ -1,4 +1,4 @@
-module User.Types exposing (..)
+module User.Types exposing (User)
 
 {-| Types for tracking user information
 

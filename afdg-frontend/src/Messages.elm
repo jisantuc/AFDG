@@ -10,8 +10,8 @@ application state
 
 -}
 
-import Types exposing (Mode, Model)
 import Tile.Types as TileTypes
+import Types exposing (Mode, Model)
 
 
 {-| Messages that can be sent by user interactions

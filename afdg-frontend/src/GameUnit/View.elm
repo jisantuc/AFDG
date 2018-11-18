@@ -1,4 +1,4 @@
-module GameUnit.View exposing (..)
+module GameUnit.View exposing (mkOafsMarker, mkWizardsMarker, textAtPoint, view)
 
 {-| Functions for rendering gameUnits
 
@@ -13,28 +13,28 @@ module GameUnit.View exposing (..)
 
 -}
 
+import GameUnit.Types exposing (..)
+import GameUnit.Util exposing (isOaf, isWizard)
+import Geom.Types exposing (Color(..), Coord)
+import Messages exposing (Msg)
 import Svg exposing (Svg, circle, rect, text, text_)
 import Svg.Attributes
     exposing
-        ( x
-        , y
-        , cx
+        ( cx
         , cy
-        , r
-        , fontSize
-        , fontFamily
-        , textAnchor
-        , width
-        , height
-        , stroke
-        , strokeWidth
         , fill
         , fillOpacity
+        , fontFamily
+        , fontSize
+        , height
+        , r
+        , stroke
+        , strokeWidth
+        , textAnchor
+        , width
+        , x
+        , y
         )
-import Messages exposing (Msg)
-import GameUnit.Types exposing (..)
-import Geom.Types exposing (Color(..), Coord)
-import GameUnit.Util exposing (isOaf, isWizard)
 
 
 {-| Write a message in a consistent style at a coord
@@ -42,8 +42,8 @@ import GameUnit.Util exposing (isOaf, isWizard)
 textAtPoint : String -> Coord -> Svg Msg
 textAtPoint s c =
     text_
-        [ x <| toString c.x
-        , y <| toString c.y
+        [ x <| String.fromInt c.x
+        , y <| String.fromInt c.y
         , stroke "none"
         , fill "black"
         , fontSize "2rem"
@@ -75,7 +75,7 @@ mkOafsMarker n (Color color) =
                 , strokeWidth "3"
                 ]
                 []
-                :: [ textAtPoint (toString n) <| Coord 125 125 ]
+                :: [ textAtPoint (String.fromInt n) <| Coord 125 125 ]
 
 
 {-| Create a marker showing how many wizards of a certain color
@@ -97,7 +97,7 @@ mkWizardsMarker n (Color color) =
                 , strokeWidth "3"
                 ]
                 []
-                :: [ textAtPoint (toString n) <| Coord 280 280 ]
+                :: [ textAtPoint (String.fromInt n) <| Coord 280 280 ]
 
 
 view : List GameUnit -> List (Svg Msg)
@@ -130,4 +130,4 @@ view units =
                 Just (Wizard obj) ->
                     obj.color
     in
-        (mkWizardsMarker nWizards color) ++ (mkOafsMarker nOafs color)
+    mkWizardsMarker nWizards color ++ mkOafsMarker nOafs color

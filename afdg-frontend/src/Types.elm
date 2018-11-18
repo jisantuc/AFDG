@@ -1,4 +1,4 @@
-module Types exposing (Model, Mode(..))
+module Types exposing (Mode(..), Model)
 
 {-| Types for working with the main application
 

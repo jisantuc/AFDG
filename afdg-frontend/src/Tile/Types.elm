@@ -1,4 +1,4 @@
-module Tile.Types exposing (..)
+module Tile.Types exposing (Border(..), Tile)
 
 {-| Types to support the Tile module
 

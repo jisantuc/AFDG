@@ -1,4 +1,4 @@
-module State exposing (initialModel, rotatePlayers, setSwitchSource)
+module State exposing (init, rotatePlayers, setSwitchSource)
 
 {-| Methods for working with main application state
 
@@ -9,12 +9,17 @@ module State exposing (initialModel, rotatePlayers, setSwitchSource)
 
 -}
 
-import Task
 import Messages exposing (..)
-import Types exposing (..)
+import Task
 import Tile.Types exposing (Tile)
 import Tile.Util exposing (someTiles)
+import Types exposing (..)
 import User.Util exposing (user1, user2)
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( initialModel, Cmd.none )
 
 
 {-| The starting state for the application
@@ -51,10 +56,10 @@ rotatePlayers model =
         rotated =
             rotateAround model.activeUser model.users
     in
-        { model
-            | users = rotated
-            , activeUser = getActiveUser model.activeUser rotated
-        }
+    { model
+        | users = rotated
+        , activeUser = getActiveUser model.activeUser rotated
+    }
 
 
 setSwitchSource : Tile -> Model -> ( Model, Cmd Msg )

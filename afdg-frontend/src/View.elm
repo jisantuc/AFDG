@@ -1,36 +1,28 @@
 module View exposing (root)
 
+import Browser exposing (Document)
 import Html exposing (Html, button, div, text)
-import Html.Attributes as HA
 import Html.Events exposing (onClick)
 import Messages exposing (Msg(..))
-import Types exposing (..)
 import Tile.View as TileView
+import Types exposing (..)
 
 
 mkButton : String -> Maybe Msg -> Html Msg
 mkButton label msg =
-    let
-        s =
-            [ HA.style [ ( "flex", "auto" ) ] ]
-    in
-        case msg of
-            Just m ->
-                button (onClick m :: s) [ text label ]
+    case msg of
+        Just m ->
+            button [ onClick m ] [ text label ]
 
-            Nothing ->
-                button s [ text label ]
+        Nothing ->
+            button [] [ text label ]
 
 
-root : Model -> Html Msg
+root : Model -> Document Msg
 root model =
-    div
-        [ HA.style
-            [ ( "display", "flex" )
-            , ( "flex-direction", "column" )
-            ]
-        ]
-        [ div [ HA.style [ ( "display", "flex" ), ( "flex-grow", "1" ) ] ]
+    { title = "AFDG"
+    , body =
+        [ div []
             [ mkButton "Neighbors Mode" (NewMode Neighbors |> Just)
             , mkButton "Reachable Mode" (NewMode Reachable |> Just)
             , mkButton "Add Oafs" (NewMode (AddOafs model.activeUser) |> Just)
@@ -44,16 +36,9 @@ root model =
             , mkButton "Nothing Mode" (NewMode Inactive |> Just)
             , mkButton "Clear" (Clear |> Just)
             ]
-        , div
-            [ HA.style
-                [ ( "display", "flex" )
-                , ( "flex-grow", "5" )
-                , ( "flex-flow", "row wrap" )
-                ]
-            , HA.width 500
-            ]
-          <|
+        , div [] <|
             List.map
                 (TileView.view model.activeMode)
                 model.tiles
         ]
+    }

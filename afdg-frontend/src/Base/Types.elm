@@ -1,4 +1,4 @@
-module Base.Types exposing (..)
+module Base.Types exposing (Base)
 
 {-| Types to support working with Bases
 
