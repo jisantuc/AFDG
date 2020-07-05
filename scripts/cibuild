@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -ex
+
+mkdir -p build
+
+elm-app make src/Main.elm --output build/index.html

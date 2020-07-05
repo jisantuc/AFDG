@@ -1,0 +1,3 @@
+set -ex
+
+aws s3 sync --delete build/ s3://afdg-game/

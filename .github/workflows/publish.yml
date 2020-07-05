@@ -1,0 +1,27 @@
+name: "Publish built, optimized artifacts to s3"
+on:
+    push:
+        branches:
+            - develop
+
+jobs:    
+    publish:
+        name: publish
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: jorelali/setup-elm@v2
+              with:
+                elm-version: 0.19.1
+            - uses: actions/setup-node@v1
+              with:
+                node-version: 12.18.2
+            - name: install create-elm-app
+              run: npm install -g create-elm-app
+            - name: build application
+              run: mkdir -p public && elm-app make --output public/index.html src/Main.elm
+            - name: create optimized bundle
+              run: elm-app build
+            - name: publish bundle
+              run: |
+                AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} AWS_REGION=us-east-1 ./scripts/cipublish
